@@ -6,7 +6,14 @@ import eslintPluginVue from "eslint-plugin-vue";
 import globals from "globals";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 
-const ignores = ["**/dist/**", "**/node_modules/**", "/.*", "scripts/**", "**/*.d.ts"];
+const ignores = [
+  "**/dist/**",
+  "**/node_modules/**",
+  "/.*",
+  "scripts/**",
+  "**/*.d.ts",
+  "packages/card-render/src/vendor/**"
+];
 
 export default defineConfig(
   // 通用配置
