@@ -1,0 +1,35 @@
+{
+  "name": "@cardcodex-monorepo/card-resources",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "generate:src": "ts-node scripts/generate-src.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.1",
+  "buildOptions": {
+    "name": "CardcodexCardResources",
+    "formats": [
+      "esm",
+      "cjs",
+      "iife"
+    ]
+  },
+  "dependencies": {
+    "@cardcodex-monorepo/utils": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "glob": "^11.0.3"
+  }
+}
