@@ -10,7 +10,7 @@ import typescript from "rollup-plugin-typescript2";
 import postcss from "rollup-plugin-postcss";
 import postcssUrl from "postcss-url"; // 导入 postcss-url
 import { glob } from "glob";
-import { clearDist } from "./bBase.js";
+import { clearDist } from "./base.js";
 
 const __filename = URL.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

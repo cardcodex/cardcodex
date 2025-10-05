@@ -11,12 +11,14 @@
     "commit": "git-cz",
     "prepare": "husky",
     "precommit": "lint-staged",
-    "build:all": "node ./scripts/build.js",
-    "build:resources": "pnpm --filter \"@cardcodex-monorepo/card-resources\" generate:src && node ./scripts/build-resources.js",
+    "playground": "pnpm --filter \"@cardcodex/playground\" dev",
+    "build:all": "pnpm run build:resources && pnpm run build:packages",
+    "build:packages": "node ./scripts/build.js",
+    "build:resources": "pnpm --filter \"@cardcodex/card-resources\" generate:src && node ./scripts/build-resources.js",
     "dev": "node ./scripts/dev.js",
     "test": "vitest",
-    "publish:utils": "pnpm --filter \"@cardcodex-monorepo/utils\" publish --no-git-checks",
-    "publish:components": "pnpm --filter \"@cardcodex-monorepo/components\" publish --no-git-checks"
+    "publish:utils": "pnpm --filter \"@cardcodex/utils\" publish --no-git-checks",
+    "publish:components": "pnpm --filter \"@cardcodex/components\" publish --no-git-checks"
   },
   "config": {
     "commitizen": {

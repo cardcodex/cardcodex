@@ -33,5 +33,8 @@ coverage/
 *.cache
 *.tmp
 
+# resources
+packages/card-resources/src/*.ts
+
 # Git
 .git/
