@@ -4,8 +4,12 @@ var TEXT_RANGES = [];
 var currentItem = {};
 var templateBlobUrls = [];
 var cardBlobUrls = [];
+var imageCreating = false;
 var PREVENT_CORS_MODE = false;
-
+var height = 0;
+export function defineConfig(config) {
+  return config;
+}
 export function prepare() {
   document.getElementById("sel-template").innerHTML = TEMPLATES.map(function (e) {
     return '<option value="' + e.path + '">' + e.name + "</option>";
@@ -863,7 +867,6 @@ export function exportForm() {
   }
 }
 
-imageCreating = false;
 export function createImage() {
   if (!imageCreating) {
     var result = document.getElementById("result");

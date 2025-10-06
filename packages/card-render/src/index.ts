@@ -1,1 +1,1 @@
-export { DemoVue, CardVue } from "./card";
+export * from "./card";

@@ -1,2 +1,1 @@
-export { default as CardVue } from "./index.vue";
-export { default as DemoVue } from "./demo.vue";
+export { default as CardRender } from "./card-render.vue";

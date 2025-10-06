@@ -61,16 +61,25 @@ styleDirs.forEach(dir => {
 });
 
 // --- 步骤 3: 生成主 index.ts (保持不变) ---
-const stylePacksExport = `
-export const stylePacks = {
-${styleDirs.map(dir => `  '${dir.toUpperCase().replace(/-/g, "_")}': '${dir}',`).join("\n")}
-} as const;
-`;
+const jsImport =
+  `${styleDirs.map(dir => `import * as ${dir.toUpperCase().replace(/-/g, "_")} from './${dir}';`).join("\n")}` as const;
+
+const jsExport = `export { ${styleDirs.map(dir => dir.toUpperCase().replace(/-/g, "_")).join(", ")} }` as const;
+
+const stylePacksExport = `export const CardResources = {
+${styleDirs.map(dir => `  '${dir.toUpperCase().replace(/-/g, "_")}': ${dir.toUpperCase().replace(/-/g, "_")},`).join("\n")}
+} as const;`;
+
 const typesExport = `
-export type StylePackName = typeof stylePacks[keyof typeof stylePacks];
+export type CardResourcesTypes = typeof CardResources[keyof typeof CardResources];
 `;
 const mainIndexContent = `// This file is auto-generated to export style names.
+${jsImport}
+
+${jsExport}
+
 ${stylePacksExport}
+
 ${typesExport}
 `;
 fs.writeFileSync(outputIndexFile, mainIndexContent, "utf8");

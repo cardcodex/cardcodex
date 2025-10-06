@@ -6,6 +6,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
 import vue from "@vitejs/plugin-vue";
 import postcss from "rollup-plugin-postcss";
+import alias from "@rollup/plugin-alias";
+import postcssImport from "postcss-import";
 
 const __filename = URL.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,11 +30,20 @@ async function getRollupConfig(root) {
   const { name, formats } = config.buildOptions || {};
   const dist = path.resolve(root, "./dist");
   const entry = path.resolve(root, "./src/index.ts");
+  const srcDir = path.resolve(root, "./src");
   const rollupOptions = {
     input: entry,
     sourcemap: true,
     external: ["vue"],
     plugins: [
+      alias({
+        entries: [
+          {
+            find: "@",
+            replacement: srcDir
+          }
+        ]
+      }),
       nodeResolve(),
       commonjs(),
       typescript({
@@ -60,7 +71,10 @@ async function getRollupConfig(root) {
           }
         }
       }),
-      postcss()
+      postcss({
+        minimize: true,
+        plugins: [postcssImport()]
+      })
     ],
     dir: dist
   };
@@ -102,6 +116,6 @@ export function clearDist(name) {
   const dist = path.resolve(__dirname, "../packages", name, "dist");
   if (fs.existsSync(dist)) {
     fs.rmSync(dist, { recursive: true, force: true });
-    console.log("remove dist directory at: " + dist);
+    console.log("🗑️ remove dist directory at: " + dist);
   }
 }

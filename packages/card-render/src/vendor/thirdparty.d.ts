@@ -249,3 +249,10 @@ export function toggleTagPairs(prefix: string, postfix: string): void;
  * @param event 键盘事件
  */
 export function editHotkey(event: KeyboardEvent): void;
+
+/**
+ * 定义卡片数据对象
+ * @param config 卡片数据对象
+ * @returns 处理后的卡片数据对象
+ */
+export function defineConfig(config: CardDataObject): CardDataObject;

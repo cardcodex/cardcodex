@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { CardVue, DemoVue } from "@cardcodex/card-render";
-console.log(CardVue);
+import { CardRender } from "@cardcodex/card-render";
+console.log(CardRender);
 </script>
 
 <template>
-  <CardVue></CardVue>
-  <DemoVue></DemoVue>
+  <CardRender></CardRender>
 </template>
 
 <style scoped>

@@ -7,11 +7,13 @@ import globals from "globals";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 const ignores = [
+  "/.*",
+  "__test__/**",
+  "**/*.d.ts",
   "**/dist/**",
   "**/node_modules/**",
-  "/.*",
   "scripts/**",
-  "**/*.d.ts",
+  "packages/*/scripts/**",
   "packages/card-render/src/vendor/**"
 ];
 
@@ -29,14 +31,13 @@ export default defineConfig(
       parser: tseslint.parser // 解析器
     },
     rules: {
-      // 自定义
       "no-var": "error" // 禁止使用var
     }
   },
   // 前端配置
   {
     ignores,
-    files: ["apps/frontend/**/*.{ts,js,tsx,jsx,vue}", "packages/components/**/*.{ts,js,tsx,jsx,vue}"],
+    files: ["packages/card-render/**/*.{ts,js,tsx,jsx,vue}"],
     extends: [...eslintPluginVue.configs["flat/recommended"], eslintConfigPrettier],
     languageOptions: {
       globals: {
@@ -47,7 +48,7 @@ export default defineConfig(
   // 后端配置
   {
     ignores,
-    files: ["apps/backend/**/*.{ts,js}"],
+    files: ["scripts/**/*.{ts,js}"],
     languageOptions: {
       globals: {
         ...globals.node
