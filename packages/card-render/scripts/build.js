@@ -1,4 +1,5 @@
-import { buildHelper, getRoot } from "../../../scripts/build-tool.js";
+import { getRoot } from "../../../scripts/utils.js";
+import { buildHelper } from "../../../scripts/build-tool.js";
 
 const root = getRoot(import.meta.url);
 
@@ -16,7 +17,7 @@ async function main() {
     external: ["vue"]
   };
   const { build } = await buildHelper(root, customOptions, rollupOptionsFn);
-  await build({ inspectConfig: true });
+  await build({ inspectConfig: false });
 }
 
 main();

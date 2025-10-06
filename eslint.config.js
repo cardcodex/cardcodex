@@ -8,7 +8,6 @@ import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 const ignores = [
   "/.*",
-  "__test__/**",
   "**/*.d.ts",
   "**/dist/**",
   "**/node_modules/**",

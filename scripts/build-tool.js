@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import URL from "node:url";
 import path from "node:path";
 import vue from "@vitejs/plugin-vue";
 import alias from "@rollup/plugin-alias";
@@ -26,12 +25,6 @@ export function clearDist(root) {
     fs.rmSync(dist, { recursive: true, force: true });
     console.log("🗑️  remove dist directory at: " + dist);
   }
-}
-
-export function getRoot(metaURL = import.meta.url) {
-  const __filename = URL.fileURLToPath(metaURL);
-  const __dirname = path.dirname(__filename);
-  return path.resolve(__dirname, "../");
 }
 
 export async function buildHelper(root, customOptions, optionFn) {
