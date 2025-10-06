@@ -12,7 +12,7 @@
     "prepare": "husky",
     "precommit": "lint-staged",
     "playground": "pnpm --filter \"@cardcodex/playground\" dev",
-    "build:all": "pnpm run build:resources && pnpm run build:packages",
+    "build:all": "pnpm -r build:self",
     "build:packages": "node ./scripts/build.js",
     "build:resources": "pnpm --filter \"@cardcodex/card-resources\" generate:src && node ./scripts/build-resources.js",
     "dev": "node ./scripts/dev.js",

@@ -8,6 +8,12 @@ export function getRoot(metaURL = import.meta.url) {
   return path.resolve(__dirname, "../");
 }
 
+export async function packageJson(root) {
+  const jsonPath = path.resolve(root, "package.json");
+  const content = await fs.promises.readFile(jsonPath, "utf-8");
+  return JSON.parse(content);
+}
+
 /**
  * 将 package.json 的 name 转换为一个有效的大驼峰 (PascalCase) JS 标识符
  * - 如果是 scoped package，则会移除 scope
@@ -49,4 +55,12 @@ export function getPackageRoots() {
     names: pkgNames,
     roots: pkgNames.map(name => path.resolve(pkgDir, name))
   };
+}
+
+export function clearDist(root) {
+  const dist = path.resolve(root, "dist");
+  if (fs.existsSync(dist)) {
+    fs.rmSync(dist, { recursive: true, force: true });
+    console.log("🗑️  remove dist directory at: " + dist);
+  }
 }

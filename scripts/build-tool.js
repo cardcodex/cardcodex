@@ -11,21 +11,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 import deepmerge from "deepmerge";
 import { rollup, watch } from "rollup";
-import { makeIdentifier } from "./utils.js";
-
-export async function packageJson(root) {
-  const jsonPath = path.resolve(root, "package.json");
-  const content = await fs.promises.readFile(jsonPath, "utf-8");
-  return JSON.parse(content);
-}
-
-export function clearDist(root) {
-  const dist = path.resolve(root, "dist");
-  if (fs.existsSync(dist)) {
-    fs.rmSync(dist, { recursive: true, force: true });
-    console.log("🗑️  remove dist directory at: " + dist);
-  }
-}
+import { makeIdentifier, packageJson, clearDist } from "./utils.js";
 
 export async function buildHelper(root, customOptions, optionFn) {
   const pkgJson = await packageJson(root);
