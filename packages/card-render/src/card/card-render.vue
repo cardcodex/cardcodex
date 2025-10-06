@@ -28,6 +28,7 @@
   </div>
 
   <div id="result"></div>
+  <button id="btn-scroll-right" type="button" class="panel-hint">▶</button>
 </template>
 
 <script lang="ts" setup>
@@ -60,5 +61,5 @@ onMounted(() => {
 </script>
 
 <style>
-/* @import "@cardcodex/card-resources/classic.css"; */
+@import "@cardcodex/card-resources/dist/classic.css";
 </style>

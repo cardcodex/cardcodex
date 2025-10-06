@@ -1,6 +1,7 @@
-import fs from "node:fs";
 import path from "node:path";
 import vue from "@vitejs/plugin-vue";
+import postcssUrl from "postcss-url";
+import autoprefixer from "autoprefixer";
 import alias from "@rollup/plugin-alias";
 import postcssImport from "postcss-import";
 import terser from "@rollup/plugin-terser";
@@ -19,7 +20,7 @@ export async function buildHelper(root, customOptions, optionFn) {
   const srcDir = path.resolve(root, "./src");
   const distDir = path.resolve(root, "./dist");
   const entry = path.resolve(root, "./src/index.ts");
-  const outputName = makeIdentifier(customOptions?.outputName ?? pkgJson?.buildOptions?.name ?? pkgJson.name);
+  const outputName = customOptions?.outputName ?? pkgJson?.buildOptions?.name ?? makeIdentifier(pkgJson.name);
   const rollupOptions = {
     input: entry,
     plugins: [
@@ -54,8 +55,16 @@ export async function buildHelper(root, customOptions, optionFn) {
         }
       }),
       postcss({
-        minimize: true,
-        plugins: [postcssImport()]
+        plugins: [
+          postcssImport(),
+          postcssUrl({
+            url: "copy",
+            useHash: true,
+            assetsPath: path.resolve(distDir, "assets")
+          }),
+          autoprefixer()
+        ],
+        minimize: true
       }),
       terser()
     ]
@@ -110,6 +119,12 @@ export async function buildHelper(root, customOptions, optionFn) {
   return {
     build: buildFn,
     watch: watchFn,
-    rollupOptions: mergedOptions
+    rollupOptions: mergedOptions,
+    distDir,
+    srcDir,
+    entry,
+    pkgJson,
+    outputName,
+    tsconfig
   };
 }

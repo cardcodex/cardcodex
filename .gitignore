@@ -38,3 +38,6 @@ packages/card-resources/src/*.ts
 
 # Git
 .git/
+
+# package/playground
+packages/playground/public/assets/*

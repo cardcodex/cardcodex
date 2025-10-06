@@ -1,5 +1,6 @@
 import { getRoot } from "../../../scripts/utils.js";
 import { buildHelper } from "../../../scripts/build-tool.js";
+import { changeDirCssURLPath } from "../../../scripts/utils.js";
 
 const root = getRoot(import.meta.url);
 
@@ -16,8 +17,13 @@ async function main() {
   const customOptions = {
     external: ["vue"]
   };
-  const { build } = await buildHelper(root, customOptions, rollupOptionsFn);
+  const { build, distDir } = await buildHelper(root, {}, rollupOptionsFn);
   await build({ inspectConfig: false });
+
+  changeDirCssURLPath(distDir, {
+    showLog: true,
+    globPattern: "**/*.js"
+  });
 }
 
 main();

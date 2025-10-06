@@ -1,6 +1,6 @@
-// build.js
-import path from "node:path";
+import fs from "node:fs";
 import URL from "node:url";
+import path from "node:path";
 import { rollup } from "rollup";
 import terser from "@rollup/plugin-terser";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -10,7 +10,7 @@ import typescript from "rollup-plugin-typescript2";
 import postcss from "rollup-plugin-postcss";
 import postcssUrl from "postcss-url";
 import { glob } from "glob";
-import { packageJson, clearDist } from "../../../scripts/utils.js";
+import { packageJson, clearDist, changeDirCssURLPath } from "../../../scripts/utils.js";
 
 const __filename = URL.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,9 +27,11 @@ async function build() {
   console.log(`📦 building package: ${pkgJson.name}`);
 
   // 遍历所有入口文件
+  let count = 1;
+  const total = entryFiles.length;
   for (const entryFile of entryFiles) {
     const entryName = path.basename(entryFile, ".ts");
-    console.log(`   🔨 building entry: ${entryName}`);
+    console.log(`   🔨 [${count}/${total}] building entry: ${entryName}`);
 
     const bundle = await rollup({
       // 每次构建只处理一个入口文件
@@ -55,8 +57,8 @@ async function build() {
           plugins: [
             postcssUrl({
               url: "copy",
-              assetsPath: path.resolve(distDir, "assets"),
-              useHash: true
+              useHash: true,
+              assetsPath: path.resolve(distDir, "assets")
             })
           ]
         })
@@ -74,8 +76,10 @@ async function build() {
       plugins: [terser()]
     });
 
-    console.log(`   ✅ ${entryName} is built`);
+    console.log(`   ✅ [${count}/${total}] ${entryName} is built`);
+    count += 1;
   }
+  changeDirCssURLPath(distDir, { showLog: true });
   console.log(`🎉 All entries for ${pkgJson.name} are built`);
 }
 

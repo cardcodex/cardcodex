@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import URL from "node:url";
 import path from "node:path";
+import { glob } from "glob";
 
 export function getRoot(metaURL = import.meta.url) {
   const __filename = URL.fileURLToPath(metaURL);
@@ -63,4 +64,21 @@ export function clearDist(root) {
     fs.rmSync(dist, { recursive: true, force: true });
     console.log("🗑️  remove dist directory at: " + dist);
   }
+}
+
+export function changeDirCssURLPath(distDir, option = { showLog: false, globPattern: "**/*.css" }) {
+  option = { showLog: false, globPattern: "**/*.css", ...option };
+  const regex = /url\(\.\.\/\.\.\/dist\//g;
+  const globPath = path.resolve(distDir, option.globPattern).replace(/\\/g, "/");
+  const distCssFiles = glob.sync(globPath);
+  let count = 1;
+  const total = distCssFiles.length;
+  for (const distCssFile of distCssFiles) {
+    const distCssContent = fs.readFileSync(distCssFile, "utf8");
+    const newDistCssContent = distCssContent.replace(regex, "url(");
+    fs.writeFileSync(distCssFile, newDistCssContent, "utf8");
+    if (option.showLog) console.log(`🔧 [${count}/${total}] ${distCssFile} is changed assets path`);
+    count += 1;
+  }
+  if (option.showLog) console.log(`🎉 All dist css files are changed assets path`);
 }

@@ -29,6 +29,9 @@ const styleDirs = fs
   .map(dirent => dirent.name);
 
 // --- 步骤 2: 为每个样式包生成更丰富的入口文件 ---
+
+let count = 1;
+const total = styleDirs.length;
 styleDirs.forEach(dir => {
   const styleDirPath = path.join(resourcesDir, dir);
   const imagesDir = path.join(styleDirPath, "images");
@@ -57,7 +60,8 @@ styleDirs.forEach(dir => {
   const styleEntryFileContent = `// Auto-generated for ${dir}\n${cssImport}\n${imageImports}\n${imageExports}`;
   const outputStyleEntryPath = path.join(srcDir, `${dir}.ts`);
   fs.writeFileSync(outputStyleEntryPath, styleEntryFileContent, "utf8");
-  console.log(`✅ Generated rich entry file: src/${dir}.ts`);
+  console.log(`✅ [${count}/${total}] Generated rich entry file: src/${dir}.ts`);
+  count += 1;
 });
 
 // --- 步骤 3: 生成主 index.ts (保持不变) ---
