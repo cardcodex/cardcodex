@@ -8,7 +8,7 @@
   "scripts": {
     "lint:prettier": "prettier --write \"**/*.{js,ts,mjs,cjs,json,tsx,css,less,scss,vue,html,md}\"",
     "lint:eslint": "eslint",
-    "commit": "git add . && git-cz",
+    "commit": "git-cz",
     "prepare": "husky",
     "precommit": "lint-staged",
     "playground": "pnpm --filter \"@cardcodex/playground\" dev",
