@@ -40,4 +40,5 @@ packages/card-resources/src/*.ts
 .git/
 
 # package/playground
+packages/playground/public/fonts/*
 packages/playground/public/assets/*

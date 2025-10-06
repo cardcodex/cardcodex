@@ -1,40 +1,26 @@
-import fs from "node:fs";
 import URL from "node:url";
+import fse from "fs-extra";
 import path from "node:path";
 
-const __dirname = path.dirname(URL.fileURLToPath(import.meta.url));
+const root = path.dirname(URL.fileURLToPath(import.meta.url));
 
-const publicAssetsDir = path.resolve(__dirname, "../public/assets");
-const distAssetsDir = path.resolve(__dirname, "../../card-render/dist/assets");
+const d = s => path.resolve(root, s);
 
-function copyPublic() {
-  let count = 1;
-  const total = distAssetsDir.length;
-  if (!fs.existsSync(distAssetsDir)) {
-    return;
-  }
+const distDir = {
+  assets: d("../../card-render/dist/assets"),
+  fonts: d("../../card-resources/fonts")
+};
 
-  // 清空 public/assets 目录
-  if (fs.existsSync(publicAssetsDir)) {
-    fs.rmSync(publicAssetsDir, { recursive: true, force: true });
-    console.log(`🗑  clear ${publicAssetsDir}`);
-  } else {
-    fs.mkdirSync(publicAssetsDir);
-    console.log(`📁  create ${publicAssetsDir}`);
-  }
+const publicDir = {
+  assets: d("../public/assets"),
+  fonts: d("../public/fonts")
+};
 
-  // 复制所有 assets 文件到 public 目录
-  fs.readdirSync(distAssetsDir).forEach(file => {
-    const source = path.resolve(distAssetsDir, file);
-    const dest = path.resolve(publicAssetsDir, file);
-    try {
-      fs.copyFileSync(source, dest);
-      console.log(`📄 [${count}/${total}] copy ${source} into ${dest}`);
-    } catch (e) {
-    } finally {
-      count += 1;
-    }
-  });
+async function main() {
+  fse.rmSync(publicDir.fonts, { recursive: true, force: true });
+  fse.rmSync(publicDir.assets, { recursive: true, force: true });
+  await fse.copy(distDir.fonts, publicDir.fonts);
+  await fse.copy(distDir.assets, publicDir.assets);
 }
 
-copyPublic();
+main();
