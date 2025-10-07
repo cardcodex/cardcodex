@@ -321,7 +321,7 @@ export function loadTemplate(template) {
 
     if (PREVENT_CORS_MODE) loadMobileSrcs(style);
 
-    zoomCard();
+    zoomCard(el);
   };
 
   // 来源：https://www.cnblogs.com/telwanggs/p/11045773.html
@@ -350,15 +350,41 @@ export function replaceSpecialCharacters(string) {
   return string.replace(/\n/g, "<br/>").replace(/(?<!\<font) /g, "&nbsp;");
 }
 
-export function createCard(object) {
+export function createCard(object, el) {
+  const cardHTML = `
+  <div class="card shu">
+    <div class="illustration">
+      <img src="" />
+    </div>
+    <div class="description-pro-bg"></div>
+    <div class="frame">
+      <div class="illustration illustration-front">
+        <img src="" />
+      </div>
+      <label class="custom-kingdom"></label>
+      <ul class="hitpoints"></ul>
+      <h2 class="nickname"></h2>
+      <h2 class="name"></h2>
+      <div class="description"></div>
+      <div class="footer">
+        <label class="trademark"></label>
+        <label class="illustrator"></label>
+        <label class="index"></label>
+      </div>
+      <label class="package"></label>
+    </div>
+  </div>
+`;
+  const template = document.createElement("template");
+  template.innerHTML = cardHTML.trim();
   currentItem = object;
   for (var i = cardBlobUrls.length - 1; i >= 0; --i) {
     revokeURL(cardBlobUrls[i]);
   }
   cardBlobUrls.length = 0;
 
-  var card = document.getElementById("template").getElementsByClassName("card")[0].cloneNode(true);
-  document.getElementById("result").appendChild(card);
+  var card = template.content.firstElementChild.cloneNode(true);
+  el.appendChild(card);
   card.className = "card " + object.style;
 
   if (object.kingdom) {
@@ -376,7 +402,7 @@ export function createCard(object) {
       }
     }
   } else {
-    //card.getElementsByClassName('custom-kingdom')[0].style.display = 'none';
+    card.getElementsByClassName("custom-kingdom")[0].style.display = "none";
   }
   card.setAttribute("kingdom", object.kingdom || "");
 
@@ -583,8 +609,7 @@ export function createCard(object) {
     }
   }
 
-  zoomCard();
-  document.getElementById("btn-scroll-right").style.display = "";
+  zoomCard(el);
 
   for (var elements = card.querySelectorAll("*"), i = elements.length - 1; i >= 0; --i) {
     var element = elements[i];
@@ -754,14 +779,11 @@ export function createCard(object) {
     } else {
       image.src = object.illustration.path;
       image2.src = object.illustration.pathFront;
-
-      console.log(image.src, image2.src);
     }
   }
 }
 
-export function zoomCard() {
-  var result = document.getElementById("result");
+export function zoomCard(result) {
   var card = result.getElementsByClassName("card")[0];
   if (card) {
     var maxwidth = window.innerWidth - 32;

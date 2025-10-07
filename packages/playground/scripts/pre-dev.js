@@ -7,19 +7,15 @@ const root = path.dirname(URL.fileURLToPath(import.meta.url));
 const d = s => path.resolve(root, s);
 
 const distDir = {
-  assets: d("../../card-render/dist/assets"),
-  fonts: d("../../card-resources/fonts")
+  assets: d("../../card-render/dist/assets")
 };
 
 const publicDir = {
-  assets: d("../public/assets"),
-  fonts: d("../public/fonts")
+  assets: d("../public/assets")
 };
 
 async function main() {
-  fse.rmSync(publicDir.fonts, { recursive: true, force: true });
   fse.rmSync(publicDir.assets, { recursive: true, force: true });
-  await fse.copy(distDir.fonts, publicDir.fonts);
   await fse.copy(distDir.assets, publicDir.assets);
 }
 

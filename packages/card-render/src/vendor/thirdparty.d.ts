@@ -150,7 +150,7 @@ export function replaceSpecialCharacters(str: string): string;
  * 根据卡片数据对象创建卡片DOM
  * @param object 卡片数据对象
  */
-export function createCard(object: CardDataObject): void;
+export function createCard(object: CardDataObject, el: HTMLDivElement): void;
 
 /** 调整卡片使其适应窗口大小 */
 export function zoomCard(): void;

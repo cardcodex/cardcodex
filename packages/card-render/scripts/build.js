@@ -17,8 +17,8 @@ async function main() {
   const customOptions = {
     external: ["vue"]
   };
-  const { build, distDir } = await buildHelper(root, {}, rollupOptionsFn);
-  await build({ inspectConfig: false });
+  const { build, distDir } = await buildHelper(root, customOptions, rollupOptionsFn);
+  await build({ inspectConfig: true });
 
   changeDirCssURLPath(distDir, {
     showLog: true,

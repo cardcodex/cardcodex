@@ -1,42 +1,13 @@
 <template>
-  <div id="template" style="display: none">
-    <div class="card shu">
-      <div class="illustration">
-        <img src="" />
-      </div>
-      <!-- 技能过长时启用 -->
-      <div class="description-pro-bg"></div>
-      <div class="frame">
-        <div class="illustration illustration-front">
-          <img src="" />
-        </div>
-        <label class="custom-kingdom"></label>
-        <ul class="hitpoints"></ul>
-        <h2 class="nickname"></h2>
-        <h2 class="name"></h2>
-
-        <div class="description"></div>
-
-        <div class="footer">
-          <label class="trademark"></label>
-          <label class="illustrator"></label>
-          <label class="index"></label>
-        </div>
-        <label class="package"></label>
-      </div>
-    </div>
-  </div>
-
-  <div id="result"></div>
-  <button id="btn-scroll-right" type="button" class="panel-hint">▶</button>
+  <div ref="el"></div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from "vue";
-import { defineConfig, createCard } from "@/vendor/thirdparty";
+import { ref, onMounted } from "vue";
+import { defineConfig, createCard } from "../vendor/thirdparty";
 const config = defineConfig({
   kingdom: "",
-  name: "某某人2",
+  name: "某某人",
   nickname: "一名角色",
   hitpoints: "3",
   style: "wei",
@@ -55,11 +26,16 @@ const config = defineConfig({
     "real-kingdom": "none"
   }
 });
+
+const el = ref(null);
 onMounted(() => {
-  createCard(config);
+  if (el.value) {
+    createCard(config, el.value);
+  }
 });
 </script>
 
 <style>
-@import "@cardcodex/card-resources/dist/classic.css";
+@import "common.css";
+@import "@cardcodex/card-resources/dist/guozhan.css";
 </style>
