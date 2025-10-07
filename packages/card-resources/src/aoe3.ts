@@ -1,4 +1,6 @@
-// Auto-generated for aoe3
+// Auto-generated for [aoe3] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/aoe3/style.css';
 
 import image0 from '../resources/aoe3/images/pointer.png';

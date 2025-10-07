@@ -1,4 +1,6 @@
-// Auto-generated for star-sp
+// Auto-generated for [star-sp] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/star-sp/style.css';
 
 import image0 from '../resources/star-sp/images/wu.png';

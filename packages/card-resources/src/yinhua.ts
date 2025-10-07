@@ -1,4 +1,6 @@
-// Auto-generated for yinhua
+// Auto-generated for [yinhua] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/yinhua/style.css';
 
 import image0 from '../resources/yinhua/images/quote-top.png';

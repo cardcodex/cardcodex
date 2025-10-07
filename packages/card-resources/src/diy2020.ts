@@ -1,4 +1,6 @@
-// Auto-generated for diy2020
+// Auto-generated for [diy2020] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/diy2020/style.css';
 
 import image0 from '../resources/diy2020/images/wu.png';

@@ -1,4 +1,6 @@
-// Auto-generated for spcloud
+// Auto-generated for [spcloud] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/spcloud/style.css';
 
 import image0 from '../resources/spcloud/images/pointer.png';

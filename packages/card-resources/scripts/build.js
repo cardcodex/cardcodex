@@ -1,15 +1,17 @@
 import fs from "node:fs";
 import URL from "node:url";
 import path from "node:path";
-import { rollup } from "rollup";
-import terser from "@rollup/plugin-terser";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import image from "@rollup/plugin-image";
-import typescript from "rollup-plugin-typescript2";
-import postcss from "rollup-plugin-postcss";
 import postcssUrl from "postcss-url";
+import image from "@rollup/plugin-image";
+import terser from "@rollup/plugin-terser";
+import postcss from "rollup-plugin-postcss";
+import commonjs from "@rollup/plugin-commonjs";
+import prefixer from "postcss-prefix-selector";
+import typescript from "rollup-plugin-typescript2";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+
 import { glob } from "glob";
+import { rollup } from "rollup";
 import { packageJson, clearDist, changeDirCssURLPath } from "../../../scripts/utils.js";
 
 const __filename = URL.fileURLToPath(import.meta.url);
@@ -21,6 +23,25 @@ const srcDir = path.resolve(root, "src").replace(/\\/g, "/");
 const tsconfig = path.resolve(root, "tsconfig.json");
 const entryFiles = glob.sync(`${srcDir}/**/*.ts`);
 
+// 单独处理 index.css
+async function aggregateCssFiles(directory) {
+  console.log("💡 aggregating CSS files into index.css");
+  const cssFiles = glob.sync(`${directory}/**/*.css`);
+  const indexCssFile = path.resolve(directory, "index.css");
+  fs.writeFileSync(indexCssFile, "");
+
+  let combinedCss = "";
+  for (const file of cssFiles) {
+    // 读取每个CSS文件的内容
+    if (file === indexCssFile) continue;
+    combinedCss += fs.readFileSync(file, "utf-8") + "\n\n";
+  }
+
+  // 将合并后的内容写入 index.css
+  fs.writeFileSync(path.resolve(directory, "index.css"), combinedCss);
+  console.log(" ✅ index.css has been aggregated.");
+}
+
 async function build() {
   clearDist(root);
   const pkgJson = await packageJson(root);
@@ -31,6 +52,7 @@ async function build() {
   const total = entryFiles.length;
   for (const entryFile of entryFiles) {
     const entryName = path.basename(entryFile, ".ts");
+    const dynamicPrefix = `[data-card-render-type="${entryName}"]`;
     console.log(`   🔨 [${count}/${total}] building entry: ${entryName}`);
 
     const bundle = await rollup({
@@ -51,10 +73,13 @@ async function build() {
           }
         }),
         postcss({
-          // ✅ 动态生成 CSS 文件名
           extract: path.resolve(distDir, `${entryName}.css`),
           minimize: true,
           plugins: [
+            prefixer({
+              prefix: dynamicPrefix,
+              exclude: [":root", "html", "body"]
+            }),
             postcssUrl({
               url: "copy",
               useHash: true,
@@ -80,6 +105,7 @@ async function build() {
     count += 1;
   }
   changeDirCssURLPath(distDir, { showLog: true });
+  aggregateCssFiles(distDir);
   console.log(`🎉 All entries for ${pkgJson.name} are built`);
 }
 

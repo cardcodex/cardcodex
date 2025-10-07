@@ -1,4 +1,6 @@
-// Auto-generated for classic-cards
+// Auto-generated for [classic-cards] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/classic-cards/style.css';
 
 import image0 from '../resources/classic-cards/images/trick.png';

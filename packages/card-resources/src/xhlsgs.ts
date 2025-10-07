@@ -1,4 +1,6 @@
-// Auto-generated for xhlsgs
+// Auto-generated for [xhlsgs] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/xhlsgs/style.css';
 
 import image0 from '../resources/xhlsgs/images/wu.png';

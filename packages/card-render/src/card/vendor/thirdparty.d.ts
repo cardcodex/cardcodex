@@ -150,10 +150,34 @@ export function replaceSpecialCharacters(str: string): string;
  * 根据卡片数据对象创建卡片DOM
  * @param object 卡片数据对象
  */
-export function createCard(object: CardDataObject, el: HTMLDivElement): void;
+export function createCard(object: CardDataObject, el: HTMLDivElement, options?: ResizeCardOptions): void;
 
 /** 调整卡片使其适应窗口大小 */
-export function zoomCard(): void;
+export function zoomCard(el: HTMLDivElement): void;
+
+/**
+ * resizeCard 函数的配置选项。
+ */
+export interface ResizeCardOptions {
+  /** 容器的最大宽度，默认为浏览器窗口宽度。 */
+  width?: number;
+  /** 容器的最大高度，默认为浏览器窗口高度。 */
+  height?: number;
+  /** 从容器尺寸中减去的边距，默认为 32。 */
+  margin?: number;
+  /** 是否为进行异步缩放，默认为 true */
+  isAsync?: boolean;
+}
+
+/**
+ * 缩放卡片元素以适应指定的容器尺寸。
+ * 如果卡片尺寸超过容器（减去边距），则按比例缩小并居中。
+ * 否则，移除缩放效果。
+ *
+ * @param card 需要缩放的 DOM 元素。
+ * @param options 可选的配置项。
+ */
+export declare function resizeCard(card: HTMLElement, options?: ResizeCardOptions): void;
 
 /** 切换表单界面和 JSON 界面 */
 export function switchInterface(this: HTMLInputElement): void;

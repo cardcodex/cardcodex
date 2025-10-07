@@ -1,4 +1,6 @@
-// Auto-generated for chibi
+// Auto-generated for [chibi] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/chibi/style.css';
 
 import image0 from '../resources/chibi/images/hp.png';

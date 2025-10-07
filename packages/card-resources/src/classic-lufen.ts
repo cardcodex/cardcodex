@@ -1,4 +1,6 @@
-// Auto-generated for classic-lufen
+// Auto-generated for [classic-lufen] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/classic-lufen/style.css';
 
 import image0 from '../resources/classic-lufen/images/wu.png';

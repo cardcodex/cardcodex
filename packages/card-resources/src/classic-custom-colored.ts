@@ -1,4 +1,6 @@
-// Auto-generated for classic-custom-colored
+// Auto-generated for [classic-custom-colored] by "script/generate-src.ts"
+// please run "npm run generate:src" to update this file.
+
 import '../resources/classic-custom-colored/style.css';
 
 import image0 from '../resources/classic-custom-colored/images/overlay-skill.png';

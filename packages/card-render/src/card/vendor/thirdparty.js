@@ -321,7 +321,7 @@ export function loadTemplate(template) {
 
     if (PREVENT_CORS_MODE) loadMobileSrcs(style);
 
-    zoomCard(el);
+    // zoomCard(el);
   };
 
   // 来源：https://www.cnblogs.com/telwanggs/p/11045773.html
@@ -350,7 +350,7 @@ export function replaceSpecialCharacters(string) {
   return string.replace(/\n/g, "<br/>").replace(/(?<!\<font) /g, "&nbsp;");
 }
 
-export function createCard(object, el) {
+export function createCard(object, el, resizeCardOptions) {
   const cardHTML = `
   <div class="card shu">
     <div class="illustration">
@@ -377,14 +377,14 @@ export function createCard(object, el) {
 `;
   const template = document.createElement("template");
   template.innerHTML = cardHTML.trim();
-  currentItem = object;
+  // currentItem = object;
   for (var i = cardBlobUrls.length - 1; i >= 0; --i) {
     revokeURL(cardBlobUrls[i]);
   }
   cardBlobUrls.length = 0;
 
   var card = template.content.firstElementChild.cloneNode(true);
-  el.appendChild(card);
+  el.innerHTML = "";
   card.className = "card " + object.style;
 
   if (object.kingdom) {
@@ -609,7 +609,7 @@ export function createCard(object, el) {
     }
   }
 
-  zoomCard(el);
+  // zoomCard(el);
 
   for (var elements = card.querySelectorAll("*"), i = elements.length - 1; i >= 0; --i) {
     var element = elements[i];
@@ -781,6 +781,11 @@ export function createCard(object, el) {
       image2.src = object.illustration.pathFront;
     }
   }
+
+  el.appendChild(card);
+  if (resizeCardOptions) {
+    resizeCard(el, resizeCardOptions);
+  }
 }
 
 export function zoomCard(result) {
@@ -801,6 +806,39 @@ export function zoomCard(result) {
     } else {
       result.style.transform = "";
     }
+  }
+}
+
+export function resizeCard(card, options = {}) {
+  if (!card) return;
+  const { isAsync = true } = options;
+  if (!isAsync) return innerResizeCard(card, options);
+
+  card.style.opacity = 0;
+  setTimeout(() => {
+    innerResizeCard(card, options);
+    card.style.opacity = "1";
+  }, 0);
+}
+
+function innerResizeCard(card, options = {}) {
+  const { width = window.innerWidth, height = window.innerHeight, margin = 32 } = options;
+
+  const maxWidth = width - margin;
+  const maxHeight = height - margin;
+
+  const cardWidth = card.clientWidth;
+  const cardHeight = card.clientHeight;
+
+  const needsScaling = cardHeight > maxHeight || cardWidth > maxWidth;
+
+  if (needsScaling) {
+    const scaleRatio = Math.min(maxHeight / cardHeight, maxWidth / cardWidth);
+    const translateX = (cardWidth * (scaleRatio - 1)) / 2;
+    const translateY = (cardHeight * (scaleRatio - 1)) / 2;
+    card.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scaleRatio})`;
+  } else {
+    card.style.transform = "";
   }
 }
 
