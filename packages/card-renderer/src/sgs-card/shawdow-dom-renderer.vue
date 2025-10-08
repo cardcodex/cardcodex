@@ -8,7 +8,7 @@ import { type SgsCardKey } from "@cardcodex/sgs-card-resources";
 import { createCard, resizeCard, type CardDataObject, type ResizeCardOptions } from "./vendor/thirdparty";
 
 import commonStyles from "./common.css?raw";
-import resourceStyles from "@cardcodex/sgs-card-resources/dist/index.css?raw";
+import resourceStyles from "@cardcodex/sgs-card-resources/dist/index.inline.css?raw";
 
 // 定义 Props
 const props = defineProps({
@@ -55,7 +55,6 @@ onMounted(() => {
   if (!hostRef.value) return;
   const shadowRoot = hostRef.value.attachShadow({ mode: "open" });
 
-  // 创建一个 <style> 标签来承载所有样式
   const styleEl = document.createElement("style");
   styleEl.textContent = commonStyles + "\n" + resourceStyles; // 将导入的 CSS 字符串合并
 

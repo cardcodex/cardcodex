@@ -180,14 +180,28 @@ export interface ResizeCardOptions {
  */
 export declare function resizeCard(card: HTMLElement, options?: ResizeCardOptions): void;
 
+export function calcResizeScaling(
+  card: HTMLElement,
+  options?: ResizeCardOptions
+): {
+  isNeedsScaling: boolean;
+  scaleRatio: number;
+  translateX: number;
+  translateY: number;
+};
+
 /** 切换表单界面和 JSON 界面 */
 export function switchInterface(this: HTMLInputElement): void;
 
 /** 将 JSON 数据导入到表单中 */
 export function exportForm(): void;
 
+export interface CreateImageOptions extends ResizeCardOptions {
+  outputType?: "canvas" | "image";
+}
+
 /** 将当前卡片渲染为图片 */
-export function createImage(): void;
+export function createImage(sourceDOM: HTMLElement, canvasParent: HTMLElement, options?: CreateImageOptions): void;
 
 /**
  * 转换垂直文本中的特殊符号

@@ -1,21 +1,14 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
   <SgsCardDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" />
-  <sgs-card-shadow-dom-renderer ref="rendererRef" :config="cardConfig" type="classic" />
+  <button @click="downloadImage">image</button>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue";
-import {
-  SgsCardDOMRenderer,
-  registerSgsCardShadowDOMRenderer,
-  type CardDataObject,
-  type CardRendererInstance
-} from ".";
+import { SgsCardDOMRenderer, SgsCardShadowDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
 
 const rendererRef = ref<CardRendererInstance | null>(null);
-
-registerSgsCardShadowDOMRenderer();
 
 const cardConfig = reactive<CardDataObject>({
   kingdom: "吴",
@@ -38,6 +31,10 @@ const cardConfig = reactive<CardDataObject>({
   package: "",
   textSize: "small"
 });
+
+function downloadImage() {
+  rendererRef.value?.exportImage();
+}
 
 onMounted(() => {
   console.log(rendererRef.value);

@@ -24,23 +24,77 @@ const tsconfig = path.resolve(root, "tsconfig.json");
 const entryFiles = glob.sync(`${srcDir}/**/*.ts`);
 
 // 单独处理 index.css
-async function aggregateCssFiles(directory) {
-  console.log("💡 aggregating CSS files into index.css");
-  const cssFiles = glob.sync(`${directory}/**/*.css`);
-  const indexCssFile = path.resolve(directory, "index.css");
-  fs.writeFileSync(indexCssFile, "");
-
-  let combinedCss = "";
-  for (const file of cssFiles) {
-    // 读取每个CSS文件的内容
-    if (file === indexCssFile) continue;
-    combinedCss += fs.readFileSync(file, "utf-8") + "\n\n";
+function buildFile(globFiles, filename, directory = distDir) {
+  console.log(`💡 aggregating into "${filename}"`);
+  const targetFile = path.resolve(directory, filename);
+  fs.writeFileSync(targetFile, "");
+  let combinedContent = "";
+  for (const file of globFiles) {
+    if (file === targetFile) continue;
+    combinedContent += fs.readFileSync(file, "utf-8") + "\n\n";
   }
 
-  // 将合并后的内容写入 index.css
-  fs.writeFileSync(path.resolve(directory, "index.css"), combinedCss);
-  console.log(" ✅ index.css has been aggregated.");
+  fs.writeFileSync(targetFile, combinedContent);
+  console.log(` ✅ "${filename}" has been aggregated.`);
 }
+
+async function aggregateCssFiles(directory) {
+  const cssFiles = glob.sync(`${directory}/**/*.css`, {
+    ignore: ["**/*.inline.css"]
+  });
+  const cssInlineFiles = glob.sync(`${directory}/**/*.inline.css`);
+  buildFile(cssFiles, "index.css", directory);
+  buildFile(cssInlineFiles, "index.inline.css", directory);
+}
+
+const rollupOptions = (entryFile, isInline) => {
+  const entryName = path.basename(entryFile, ".ts");
+  const dynamicPrefix = `[data-card-renderer-type="${entryName}"]`;
+  const choose = (a, b) => (isInline ? a : b);
+
+  const postcssUrlConfig = choose(
+    { url: "inline" },
+    {
+      url: "copy",
+      useHash: true,
+      assetsPath: path.resolve(distDir, "assets")
+    }
+  );
+
+  const extract = choose(path.resolve(distDir, `${entryName}.inline.css`), path.resolve(distDir, `${entryName}.css`));
+
+  const options = {
+    input: entryFile,
+    plugins: [
+      image(),
+      nodeResolve(),
+      commonjs(),
+      typescript({
+        tsconfig,
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: true,
+            declarationDir: distDir
+          }
+        }
+      }),
+      postcss({
+        extract,
+        minimize: true,
+        plugins: [
+          prefixer({
+            prefix: dynamicPrefix,
+            exclude: [":root", "html", "body"]
+          }),
+          postcssUrl(postcssUrlConfig)
+        ]
+      })
+    ],
+    external: []
+  };
+
+  return options;
+};
 
 async function build() {
   clearDist(root);
@@ -50,58 +104,39 @@ async function build() {
   // 遍历所有入口文件
   let count = 1;
   const total = entryFiles.length;
+
   for (const entryFile of entryFiles) {
     const entryName = path.basename(entryFile, ".ts");
-    const dynamicPrefix = `[data-card-renderer-type="${entryName}"]`;
     console.log(`   🔨 [${count}/${total}] building entry: ${entryName}`);
-
-    const bundle = await rollup({
-      // 每次构建只处理一个入口文件
-      input: entryFile,
-      plugins: [
-        image(),
-        nodeResolve(),
-        commonjs(),
-        typescript({
-          tsconfig,
-          tsconfigOverride: {
-            compilerOptions: {
-              declaration: true,
-              // 让类型声明文件也输出到 dist 根目录，以便后续合并
-              declarationDir: distDir
-            }
-          }
-        }),
-        postcss({
-          extract: path.resolve(distDir, `${entryName}.css`),
-          minimize: true,
-          plugins: [
-            prefixer({
-              prefix: dynamicPrefix,
-              exclude: [":root", "html", "body"]
-            }),
-            postcssUrl({
-              url: "copy",
-              useHash: true,
-              assetsPath: path.resolve(distDir, "assets")
-            })
-          ]
-        })
-      ],
-      external: []
-    });
-
-    // 为当前入口写入打包文件
+    const bundle = await rollup(rollupOptions(entryFile, false));
     await bundle.write({
       dir: distDir,
       format: "esm",
       sourcemap: true,
-      // JS 文件名也根据入口名称动态生成
       entryFileNames: `${entryName}.mjs`,
       plugins: [terser()]
     });
 
     console.log(`   ✅ [${count}/${total}] ${entryName} is built`);
+    count += 1;
+  }
+
+  count = 1;
+
+  console.log(`💡 Waiting for generating inline css`);
+  for (const entryFile of entryFiles) {
+    const entryName = path.basename(entryFile, ".ts");
+    console.log(`   🔨 [${count}/${total}] building entry: ${entryName} [inline css]`);
+    const bundle = await rollup(rollupOptions(entryFile, true));
+    await bundle.write({
+      dir: distDir,
+      format: "esm",
+      sourcemap: true,
+      entryFileNames: `${entryName}.mjs`,
+      plugins: [terser()]
+    });
+
+    console.log(`   ✅ [${count}/${total}] ${entryName} [inline css] is built`);
     count += 1;
   }
   changeDirCssURLPath(distDir, { showLog: true });

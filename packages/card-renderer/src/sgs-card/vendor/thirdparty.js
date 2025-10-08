@@ -1,3 +1,4 @@
+import html2canvas from "html2canvas";
 var EXTRA_SEGMENTS = [];
 var SKILL_TAGS = ["lord", "compulsory", "limit", "wake"];
 var TEXT_RANGES = [];
@@ -832,17 +833,11 @@ export function resizeCard(card, options = {}) {
 }
 
 function innerResizeCard(card, options = {}) {
-  const { width = window.innerWidth, height = window.innerHeight, margin = 32 } = options;
+  const { width = window.innerWidth, height = window.innerHeight, margin = 0 } = options;
 
-  const maxWidth = width - margin;
-  const maxHeight = height - margin;
+  const { isNeedsScaling, scaleRatio, translateX, translateY } = calcResizeScaling(card, options);
 
-  const cardWidth = card.clientWidth;
-  const cardHeight = card.clientHeight;
-
-  const needsScaling = cardHeight > maxHeight || cardWidth > maxWidth;
-
-  if (needsScaling) {
+  if (isNeedsScaling) {
     const scaleRatio = Math.min(maxHeight / cardHeight, maxWidth / cardWidth);
     const translateX = (cardWidth * (scaleRatio - 1)) / 2;
     const translateY = (cardHeight * (scaleRatio - 1)) / 2;
@@ -850,6 +845,29 @@ function innerResizeCard(card, options = {}) {
   } else {
     card.style.transform = "";
   }
+}
+
+export function calcResizeScaling(card, options = {}) {
+  const { width = window.innerWidth, height = window.innerHeight, margin = 0 } = options;
+
+  const maxWidth = width - margin;
+  const maxHeight = height - margin;
+
+  const cardWidth = card.clientWidth;
+  const cardHeight = card.clientHeight;
+
+  const isNeedsScaling = cardHeight > maxHeight || cardWidth > maxWidth;
+
+  const scaleRatio = Math.min(maxHeight / cardHeight, maxWidth / cardWidth);
+  const translateX = (cardWidth * (scaleRatio - 1)) / 2;
+  const translateY = (cardHeight * (scaleRatio - 1)) / 2;
+
+  return {
+    isNeedsScaling,
+    scaleRatio,
+    translateX,
+    translateY
+  };
 }
 
 var mode = false;
@@ -937,19 +955,10 @@ export function exportForm() {
   }
 }
 
-export function createImage() {
+export function createImage(result, outputEl, options) {
+  const { outputType = "image" } = options;
   if (!imageCreating) {
-    var result = document.getElementById("result");
-
-    var scale = +document.getElementById("sel-scale").value;
-    if (scale > 0) {
-      scale /= window.devicePixelRatio;
-    } else if (scale == -1) {
-      scale = 1;
-    } else if (scale == -2) {
-      scale = Math.min((window.innerWidth - 4) / result.clientWidth, (window.innerHeight - 4) / result.clientHeight);
-    }
-
+    var scale = calcResizeScaling(result, options);
     var card0 = result.children[0];
     if (card0) {
       var card = document.createElement("div");
@@ -1073,10 +1082,11 @@ export function createImage() {
           function (canvas) {
             document.body.parentElement.style.width = "";
             imageCreating = false;
-            var output = document.getElementById("output");
+            var output = outputEl;
             output.innerHTML = "";
             var outputElement = canvas;
             try {
+              if (outputType !== "image") throw Error("skip");
               var image = new Image();
               image.src = canvas.toDataURL();
               image.height = canvas.height / window.devicePixelRatio;
