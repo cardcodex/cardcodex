@@ -71,9 +71,6 @@ importers:
       eslint-plugin-vue:
         specifier: ^10.4.0
         version: 10.4.0(@typescript-eslint/parser@8.44.0(eslint@9.36.0(jiti@2.5.1))(typescript@5.9.2))(eslint@9.36.0(jiti@2.5.1))(vue-eslint-parser@10.2.0(eslint@9.36.0(jiti@2.5.1)))
-      fs-extra:
-        specifier: ^11.3.2
-        version: 11.3.2
       glob:
         specifier: ^11.0.3
         version: 11.0.3
@@ -126,11 +123,11 @@ importers:
         specifier: ^3.5.21
         version: 3.5.21(typescript@5.9.2)
 
-  packages/card-render:
+  packages/card-renderer:
     dependencies:
-      '@cardcodex/card-resources':
+      '@cardcodex/sgs-card-resources':
         specifier: workspace:*
-        version: link:../card-resources
+        version: link:../sgs-card-resources
       '@cardcodex/utils':
         specifier: workspace:*
         version: link:../utils
@@ -138,21 +135,11 @@ importers:
         specifier: ^3.5.21
         version: 3.5.22(typescript@5.9.3)
 
-  packages/card-resources:
-    dependencies:
-      '@cardcodex/utils':
-        specifier: workspace:*
-        version: link:../utils
-    devDependencies:
-      glob:
-        specifier: ^11.0.3
-        version: 11.0.3
-
   packages/playground:
     dependencies:
-      '@cardcodex/card-render':
+      '@cardcodex/card-renderer':
         specifier: workspace:*
-        version: link:../card-render
+        version: link:../card-renderer
       vue:
         specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
@@ -175,6 +162,16 @@ importers:
       vue-tsc:
         specifier: ^3.1.0
         version: 3.1.0(typescript@5.9.3)
+
+  packages/sgs-card-resources:
+    dependencies:
+      '@cardcodex/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      glob:
+        specifier: ^11.0.3
+        version: 11.0.3
 
   packages/utils: {}
 
@@ -1926,10 +1923,6 @@ packages:
   fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
-
-  fs-extra@11.3.2:
-    resolution: {integrity: sha512-Xr9F6z6up6Ws+NjzMCZc6WXg2YFRlrLP9NQDO3VQrWrfiojdhS56TzueT88ze0uBdCTwEIhQ3ptnmKeWGFAe0A==}
-    engines: {node: '>=14.14'}
 
   fs-extra@9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
@@ -5257,12 +5250,6 @@ snapshots:
   fraction.js@4.3.7: {}
 
   fs-extra@10.1.0:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 6.2.0
-      universalify: 2.0.1
-
-  fs-extra@11.3.2:
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 6.2.0

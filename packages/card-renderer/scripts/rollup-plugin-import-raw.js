@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import importRaw from "./rollup-plugin-import-raw"
 
-export default function importRaw() {
+export default function () {
   const importers = {};
   const filter = id => id.endsWith("?raw");
   return {

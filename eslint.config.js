@@ -15,7 +15,7 @@ export default [
       "**/node_modules/**",
       "scripts/**",
       "packages/*/scripts/**",
-      "packages/card-render/src/vendor/*.js"
+      "packages/card-renderer/src/vendor/*.js"
     ]
   },
 
@@ -30,7 +30,7 @@ export default [
 
   // 3. Vue + TypeScript 的专属配置 (关键部分)
   {
-    files: ["packages/card-render/**/*.{vue,ts,js}"],
+    files: ["packages/card-renderer/**/*.{vue,ts,js}"],
     // 继承规则，注意 prettierConfig 必须在最后
     extends: [...eslintPluginVue.configs["flat/vue3-recommended"], prettierConfig],
     plugins: {

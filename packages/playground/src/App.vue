@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, type Reactive } from "vue";
-import { CardRenderer, type CardDataObject, type CardRendererInstance } from "@cardcodex/card-render";
+import { CardRenderer, type CardDataObject, type CardRendererInstance } from "@cardcodex/card-renderer";
 
 const rendererRef = ref<CardRendererInstance | null>(null);
 

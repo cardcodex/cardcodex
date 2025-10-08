@@ -52,7 +52,7 @@ async function build() {
   const total = entryFiles.length;
   for (const entryFile of entryFiles) {
     const entryName = path.basename(entryFile, ".ts");
-    const dynamicPrefix = `[data-card-render-type="${entryName}"]`;
+    const dynamicPrefix = `[data-card-renderer-type="${entryName}"]`;
     console.log(`   🔨 [${count}/${total}] building entry: ${entryName}`);
 
     const bundle = await rollup({

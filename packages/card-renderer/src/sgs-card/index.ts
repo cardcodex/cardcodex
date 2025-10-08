@@ -1,10 +1,11 @@
-import CardRenderer from "./card-renderer.vue";
-import { type CardResourcesValuesType } from "@cardcodex/card-resources";
+import SgsCardDOMRenderer from "./dom-renderer.vue";
+import SgsCardShadowDOMRenderer from "./shawdow-dom-renderer.vue";
+import { type SgsCardKey } from "@cardcodex/sgs-card-resources";
 import { type CardDataObject, type ResizeCardOptions } from "./vendor/thirdparty.js";
 
 export interface CardRendererProps {
   config: CardDataObject;
-  type: CardResourcesValuesType;
+  type: SgsCardKey;
   resizeOptions?: ResizeCardOptions;
 }
 
@@ -13,4 +14,4 @@ export interface CardRendererInstance {
 }
 
 export type { CardDataObject, ResizeCardOptions };
-export { CardRenderer };
+export { SgsCardDOMRenderer, SgsCardShadowDOMRenderer };

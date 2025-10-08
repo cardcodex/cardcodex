@@ -1,16 +1,16 @@
 <template>
-  <div ref="containerRef" :data-card-render-type="props.type"></div>
+  <div ref="containerRef" :data-card-renderer-type="props.type"></div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch, onMounted, type PropType } from "vue";
-import { type CardResourcesValuesType } from "@cardcodex/card-resources";
+import { type SgsCardKey } from "@cardcodex/sgs-card-resources";
 import { createCard, resizeCard, type CardDataObject, type ResizeCardOptions } from "./vendor/thirdparty";
 
 // 定义 Props
 const props = defineProps({
   type: {
-    type: String as unknown as PropType<CardResourcesValuesType>,
+    type: String as unknown as PropType<SgsCardKey>,
     required: true
   },
   config: {
@@ -63,5 +63,5 @@ defineExpose({
 
 <style>
 @import "common.css";
-@import "@cardcodex/card-resources/dist/index.css";
+@import "@cardcodex/sgs-card-resources/dist/index.css";
 </style>

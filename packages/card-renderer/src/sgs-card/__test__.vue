@@ -1,11 +1,12 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
-  <CardRenderer ref="rendererRef" :config="cardConfig" type="classic" />
+  <SgsCardDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" />
+  <SgsCardShadowDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" />
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue";
-import { CardRenderer, type CardDataObject, type CardRendererInstance } from "./";
+import { SgsCardDOMRenderer, SgsCardShadowDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
 
 const rendererRef = ref<CardRendererInstance | null>(null);
 

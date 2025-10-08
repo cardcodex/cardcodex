@@ -1,19 +1,19 @@
 <template>
-  <div ref="hostRef" :data-card-render-type="props.type"></div>
+  <div ref="hostRef" :data-card-renderer-type="props.type"></div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch, onMounted, type PropType } from "vue";
-import { type CardResourcesValuesType } from "@cardcodex/card-resources";
+import { type SgsCardKey } from "@cardcodex/sgs-card-resources";
 import { createCard, resizeCard, type CardDataObject, type ResizeCardOptions } from "./vendor/thirdparty";
 
 import commonStyles from "./common.css?raw";
-import resourceStyles from "@cardcodex/card-resources/dist/index.css?raw";
+import resourceStyles from "@cardcodex/sgs-card-resources/dist/index.css?raw";
 
 // 定义 Props
 const props = defineProps({
   type: {
-    type: String as unknown as PropType<CardResourcesValuesType>,
+    type: String as unknown as PropType<SgsCardKey>,
     required: true
   },
   config: {
@@ -32,7 +32,7 @@ const mountPointRef = ref<HTMLDivElement | null>(null);
 async function renderAndResizeCard(isFirstRender = false) {
   if (!mountPointRef.value) return;
   const el = mountPointRef.value as HTMLDivElement;
-  el.setAttribute("data-card-render-type", props.type);
+  el.setAttribute("data-card-renderer-type", props.type);
   if (isFirstRender) return createCard(props.config, el, props.resizeOptions);
   createCard(props.config, el, undefined);
   resizeCard(el, props.resizeOptions);

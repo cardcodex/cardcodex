@@ -38,7 +38,7 @@ coverage/
 .git/
 
 # resources
-packages/card-resources/src/*.ts
+packages/sgs-card-resources/src/*.ts
 
 # package/playground
 packages/playground/public/fonts/*

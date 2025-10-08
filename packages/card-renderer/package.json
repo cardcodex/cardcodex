@@ -1,21 +1,20 @@
 {
-  "name": "@cardcodex/card-resources",
+  "name": "@cardcodex/card-renderer",
   "version": "1.0.1",
   "description": "",
-  "main": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.esm.js",
   "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
   "scripts": {
-    "generate:src": "ts-node scripts/generate-src.ts",
     "build": "node scripts/build.js",
-    "build:self": "pnpm run generate:src && pnpm run build"
+    "build:self": "pnpm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.15.1",
   "buildOptions": {
-    "name": "CardcodexCardResources",
     "formats": [
       "esm",
       "cjs",
@@ -23,6 +22,8 @@
     ]
   },
   "dependencies": {
+    "vue": "^3.5.21",
+    "@cardcodex/sgs-card-resources": "workspace:*",
     "@cardcodex/utils": "workspace:*"
   },
   "files": [
@@ -30,8 +31,5 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "glob": "^11.0.3"
   }
 }

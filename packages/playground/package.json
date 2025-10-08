@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "vue": "^3.5.22",
-    "@cardcodex/card-render": "workspace:*"
+    "@cardcodex/card-renderer": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",

@@ -16,7 +16,7 @@ export default defineConfig({
         test: {
           globals: true,
           name: "ui",
-          include: ["packages/card-render/__test__/**/*.{test,spec}.{ts,js,tsx,jsx}"],
+          include: ["packages/card-renderer/__test__/**/*.{test,spec}.{ts,js,tsx,jsx}"],
           browser: {
             enabled: true,
             instances: [{ browser: "chromium" }]
