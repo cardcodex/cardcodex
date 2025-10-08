@@ -343,8 +343,8 @@ export function loadTemplate(template) {
 
 export function imageAdjustFeedback(image) {
   var scale = (image.scrollWidth / image.naturalWidth + image.scrollHeight / image.naturalHeight) / 2;
-  document.getElementById("panel-illustration-adjust").value =
-    image.offsetLeft + ", " + image.offsetTop + ", " + scale.toFixed(4);
+  // document.getElementById("panel-illustration-adjust").value =
+  //   image.offsetLeft + ", " + image.offsetTop + ", " + scale.toFixed(4);
 }
 
 export function replaceSpecialCharacters(string) {
@@ -565,10 +565,14 @@ export function createCard(object, el, resizeCardOptions) {
     }
   }
 
+  var footer = card.getElementsByClassName("footer")[0];
   var left = card.getElementsByClassName("trademark")[0];
   var right = card.getElementsByClassName("index")[0];
   var center = card.getElementsByClassName("illustrator")[0];
   var comment = object.comment;
+  if (comment?.every(e => !e)) {
+    footer.style.display = "none";
+  }
   if (comment.length == 3) {
     left.innerHTML = comment[0];
     center.innerHTML = comment[1];
@@ -956,200 +960,202 @@ export function exportForm() {
 }
 
 export function createImage(result, outputEl, options) {
-  const { outputType = "image" } = options;
-  if (!imageCreating) {
-    var scale = calcResizeScaling(result, options);
-    var card0 = result.children[0];
-    if (card0) {
-      var card = document.createElement("div");
-      result.appendChild(card);
-      card.outerHTML = card0.outerHTML;
-      card = result.children[1];
-      card0.style.display = "none";
+  const { outputType = "image", onFinished = () => {}, imageScale = "100%" } = options;
 
-      imageCreating = true;
-      card.classList.add("on-rendering");
-      var transform = result.style.transform;
-      var transformZoomed = "scale(" + scale + ")";
-      result.style.transform = transformZoomed;
+  var scale = 1;
+  if (scale > 0) {
+    scale /= window.devicePixelRatio;
+  } else if (scale == -1) {
+    scale = 1;
+  } else if (scale == -2) {
+    scale = Math.min((window.innerWidth - 4) / result.clientWidth, (window.innerHeight - 4) / result.clientHeight);
+  }
+  var card0 = result.children[0];
+  if (!imageCreating && card0) {
+    var card = document.createElement("div");
+    result.appendChild(card);
+    card.outerHTML = card0.outerHTML;
+    card = result.children[1];
+    card0.style.display = "none";
+    card.style.visbility = "hidden";
 
-      // 因html2canvas忽略text-shadow受transform的影响，所以换算
-      var subElements = card.querySelectorAll("*");
-      var subElementStyles = [];
-      for (var i = 0; i < subElements.length; ++i) {
-        var style = getComputedStyle(subElements[i]);
-        var st = { textShadow: style.textShadow };
-        subElementStyles[i] = st;
-        if (style.writingMode == "vertical-rl") {
-          st.writingMode = "vertical-rl";
-        }
-        if (style.webkitBackgroundClip == "text") {
-          st.webkitBackgroundClip = "text";
-        }
+    imageCreating = true;
+    card.classList.add("on-rendering");
+    var transform = result.style.transform;
+    var transformZoomed = "scale(" + scale + ")";
+    result.style.transform = transformZoomed;
+
+    // 因html2canvas忽略text-shadow受transform的影响，所以换算
+    var subElements = card.querySelectorAll("*");
+    var subElementStyles = [];
+    for (var i = 0; i < subElements.length; ++i) {
+      var style = getComputedStyle(subElements[i]);
+      var st = { textShadow: style.textShadow };
+      subElementStyles[i] = st;
+      if (style.writingMode == "vertical-rl") {
+        st.writingMode = "vertical-rl";
       }
-      for (var i = 0; i < subElementStyles.length; ++i) {
-        var style = subElementStyles[i];
-        var textShadow = style.textShadow;
-        if (textShadow && textShadow != "none") {
-          subElements[i].style.textShadow = textShadow.replace(
-            // 0 will be converted to 0px automatically
-            /([\d\.\-]+(?:px|em|ex|ch|rem))\s+([\d\.\-]+(?:px|em|ex|ch|rem))\s*([\d\.\-]+(?:px|em|ex|ch|rem))?/g,
-            function (m, x, y, z) {
-              var s = "calc(" + scale + " * " + x + ") calc(" + scale + " * " + y + ") ";
-              if (z) {
-                s += "calc(" + scale * window.devicePixelRatio + " * " + z + ") ";
-              }
-              return s;
-            }
-          );
-        }
-        if (style.writingMode == "vertical-rl") {
-          convertVerticalText(subElements[i]);
-        }
+      if (style.webkitBackgroundClip == "text") {
+        st.webkitBackgroundClip = "text";
       }
+    }
 
-      var promise = Promise.resolve();
-
-      result.style.transform = "";
-      document.body.parentElement.style.width = "10000px";
-      for (var i = 0; i < subElementStyles.length; ++i) {
-        // 制造渐变文字
-        if (subElementStyles[i].webkitBackgroundClip == "text") {
-          (function (element) {
-            var computedStyle = getComputedStyle(element);
-            if (computedStyle.getPropertyValue("--value")) {
-              element.innerHTML = computedStyle.getPropertyValue("--value");
+    for (var i = 0; i < subElementStyles.length; ++i) {
+      var style = subElementStyles[i];
+      var textShadow = style.textShadow;
+      if (textShadow && textShadow != "none") {
+        subElements[i].style.textShadow = textShadow.replace(
+          // 0 will be converted to 0px automatically
+          /([\d\.\-]+(?:px|em|ex|ch|rem))\s+([\d\.\-]+(?:px|em|ex|ch|rem))\s*([\d\.\-]+(?:px|em|ex|ch|rem))?/g,
+          function (m, x, y, z) {
+            var s = "calc(" + scale + " * " + x + ") calc(" + scale + " * " + y + ") ";
+            if (z) {
+              s += "calc(" + scale * window.devicePixelRatio + " * " + z + ") ";
             }
-            if (!element.innerHTML) return;
-
-            var textShadow = element.style.textShadow;
-            element.style.textShadow = "none";
-            element.style.color = "transparent";
-            element.style.transform = transformZoomed;
-            promise = promise.then(function () {
-              var textImage;
-              return html2canvas(element)
-                .then(function (canvas) {
-                  textImage = new Image();
-                  textImage.src = canvas.toDataURL();
-                  element.style.color = "";
-                  element.style.backgroundImage = "none";
-                  return html2canvas(element, { backgroundColor: null });
-                })
-                .then(function (canvas) {
-                  var width = canvas.width,
-                    height = canvas.height; // Must be greater than 0
-                  var adata = canvas.getContext("2d").getImageData(0, 0, width, height).data;
-                  canvas = document.createElement("canvas");
-                  canvas.width = width;
-                  canvas.height = height;
-                  var context = canvas.getContext("2d");
-                  context.drawImage(textImage, 0, 0);
-                  var imageData = context.getImageData(0, 0, width, height);
-                  var cdata = imageData.data;
-                  for (var i = cdata.length - 1; i >= 0; i -= 4) {
-                    cdata[i] = adata[i];
-                  }
-                  context.putImageData(imageData, 0, 0);
-                  var fillImage = new Image();
-                  fillImage.src = canvas.toDataURL();
-                  element.insertBefore(fillImage, element.childNodes[0]);
-                  var r = scale * window.devicePixelRatio;
-                  fillImage.style.width = width / r + "px";
-                  fillImage.style.height = height / r + "px";
-                  fillImage.className = "_gradient-text";
-                  //fillImage.style.left = element.offsetLeft + 'px';
-                  //fillImage.style.top = element.offsetTop + 'px';
-                  element.style.textShadow = textShadow;
-                  element.style.textAlign = "";
-                  element.style.transform = "";
-                });
-            });
-          })(subElements[i]);
-        }
-      }
-
-      promise
-        .then(function () {
-          result.style.transform = transformZoomed;
-          result.style.setProperty("--output-scale", scale);
-          return html2canvas(result, {
-            allowTaint: true,
-            useCORS: true
-          });
-        })
-        .then(
-          function (canvas) {
-            document.body.parentElement.style.width = "";
-            imageCreating = false;
-            var output = outputEl;
-            output.innerHTML = "";
-            var outputElement = canvas;
-            try {
-              if (outputType !== "image") throw Error("skip");
-              var image = new Image();
-              image.src = canvas.toDataURL();
-              image.height = canvas.height / window.devicePixelRatio;
-              outputElement = image;
-              image.onclick = function () {
-                if (confirm("下载图片吗？")) {
-                  var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-                  a.download = currentItem.nickname + "-" + currentItem.name + ".png";
-                  if (navigator.userAgent.match("MQQBrowser")) {
-                    // QQ浏览器不支持Blob图片
-                    a.href = image.src;
-                    a.click();
-                  } else {
-                    canvas.toBlob(function (blob) {
-                      a.href = getFileURL(blob);
-                      a.click();
-                      cardBlobUrls.push(a.href);
-                    });
-                  }
-                }
-              };
-            } catch (e) {
-              console.log("无法导出成image，只能使用canvas。");
-
-              var hint = document.createElement("h3");
-              hint.innerHTML = "点击图片来切换底色，然后截图保存<br/>（电脑版可直接右键保存）";
-              hint.className = "panel-hint";
-              output.appendChild(hint);
-
-              var currentColor = 0;
-              canvas.onclick = function () {
-                switch ((currentColor = (currentColor + 1) % 4)) {
-                  case 1:
-                    output.style.backgroundColor = "#F00";
-                    break;
-                  case 2:
-                    output.style.backgroundColor = "#0F0";
-                    break;
-                  case 3:
-                    output.style.backgroundColor = "#00F";
-                    break;
-                  default:
-                    output.style.backgroundColor = "";
-                    break;
-                }
-                hint.innerHTML = "";
-                event.preventDefault();
-                event.stopPropagation();
-              };
-            }
-
-            output.appendChild(outputElement);
-            output.style.display = "";
-            result.style.transform = transform;
-            result.style.setProperty("--output-scale", "");
-            card0.style.display = "";
-            result.removeChild(card);
-          },
-          function () {
-            imageCreating = false;
+            return s;
           }
         );
+      }
+      if (style.writingMode == "vertical-rl") {
+        convertVerticalText(subElements[i]);
+      }
     }
+
+    var promise = Promise.resolve();
+
+    result.style.transform = "";
+    for (var i = 0; i < subElementStyles.length; ++i) {
+      // 制造渐变文字
+      if (subElementStyles[i].webkitBackgroundClip == "text") {
+        const element = subElements[i];
+        var computedStyle = getComputedStyle(element);
+        if (computedStyle.getPropertyValue("--value")) {
+          element.innerHTML = computedStyle.getPropertyValue("--value");
+        }
+        if (!element.innerHTML) return;
+
+        var textShadow = element.style.textShadow;
+        element.style.textShadow = "none";
+        element.style.color = "transparent";
+        element.style.transform = transformZoomed;
+        promise = promise.then(function () {
+          var textImage;
+          return html2canvas(element)
+            .then(function (canvas) {
+              textImage = new Image();
+              textImage.src = canvas.toDataURL();
+              element.style.color = "";
+              element.style.backgroundImage = "none";
+              return html2canvas(element, { backgroundColor: null });
+            })
+            .then(function (canvas) {
+              var width = canvas.width,
+                height = canvas.height; // Must be greater than 0
+              var adata = canvas.getContext("2d").getImageData(0, 0, width, height).data;
+              canvas = document.createElement("canvas");
+              canvas.width = width;
+              canvas.height = height;
+              var context = canvas.getContext("2d");
+              context.drawImage(textImage, 0, 0);
+              var imageData = context.getImageData(0, 0, width, height);
+              var cdata = imageData.data;
+              for (var i = cdata.length - 1; i >= 0; i -= 4) {
+                cdata[i] = adata[i];
+              }
+              context.putImageData(imageData, 0, 0);
+              var fillImage = new Image();
+              fillImage.src = canvas.toDataURL();
+              element.insertBefore(fillImage, element.childNodes[0]);
+              var r = scale * window.devicePixelRatio;
+              fillImage.style.width = width / r + "px";
+              fillImage.style.height = height / r + "px";
+              fillImage.className = "_gradient-text";
+              //fillImage.style.left = element.offsetLeft + 'px';
+              //fillImage.style.top = element.offsetTop + 'px';
+              element.style.textShadow = textShadow;
+              element.style.textAlign = "";
+              element.style.transform = "";
+            });
+        });
+      }
+    }
+
+    promise
+      .then(function () {
+        result.style.transform = transformZoomed;
+        result.style.setProperty("--output-scale", scale);
+        return html2canvas(result, {
+          allowTaint: true,
+          useCORS: true
+        });
+      })
+      .then(
+        function (canvas) {
+          document.body.parentElement.style.width = "";
+          imageCreating = false;
+          var output = outputEl;
+          output.innerHTML = "";
+          var outputElement = canvas;
+          try {
+            if (outputType !== "image") throw Error("skip");
+            var image = new Image();
+            image.src = canvas.toDataURL();
+            image.height = canvas.height / window.devicePixelRatio;
+            outputElement = image;
+
+            onFinished(canvas, image);
+            image.onclick = function () {
+              if (confirm("下载图片吗？")) {
+                var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+                a.download = currentItem.nickname + "-" + currentItem.name + ".png";
+                if (navigator.userAgent.match("MQQBrowser")) {
+                  // QQ浏览器不支持Blob图片
+                  a.href = image.src;
+                  a.click();
+                } else {
+                  canvas.toBlob(function (blob) {
+                    a.href = getFileURL(blob);
+                    a.click();
+                    cardBlobUrls.push(a.href);
+                  });
+                }
+              }
+            };
+          } catch (e) {
+            onFinished(canvas);
+            // var currentColor = 0;
+            // canvas.onclick = function () {
+            //   switch ((currentColor = (currentColor + 1) % 4)) {
+            //     case 1:
+            //       output.style.backgroundColor = "#F00";
+            //       break;
+            //     case 2:
+            //       output.style.backgroundColor = "#0F0";
+            //       break;
+            //     case 3:
+            //       output.style.backgroundColor = "#00F";
+            //       break;
+            //     default:
+            //       output.style.backgroundColor = "";
+            //       break;
+            //   }
+            //   hint.innerHTML = "";
+            //   event.preventDefault();
+            //   event.stopPropagation();
+            // };
+          }
+
+          output.appendChild(outputElement);
+          output.style.display = "";
+          result.style.transform = transform;
+          result.style.setProperty("--output-scale", "");
+          card0.style.display = "";
+          result.removeChild(card);
+        },
+        function () {
+          imageCreating = false;
+        }
+      );
   }
 }
 

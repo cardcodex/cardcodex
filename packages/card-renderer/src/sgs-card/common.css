@@ -512,6 +512,7 @@ font[huali] {
 .card .frame ._use-gradient[lang="emoji"]::after {
   content: none;
 }
+
 .card .frame ._use-gradient[lang="emoji"] {
   -webkit-text-fill-color: var(--gradient-emoji) !important;
   -webkit-background-clip: var(--gradient-emoji) !important;

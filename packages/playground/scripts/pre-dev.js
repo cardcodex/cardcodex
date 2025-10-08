@@ -1,3 +1,4 @@
+import fse from "fs-extra";
 import URL from "node:url";
 import path from "node:path";
 
@@ -13,4 +14,9 @@ const publicDir = {
   assets: d("../public/assets")
 };
 
+async function main() {
+  fse.rmSync(publicDir.assets, { recursive: true, force: true });
+  await fse.copy(distDir.assets, publicDir.assets);
+}
 
+main();

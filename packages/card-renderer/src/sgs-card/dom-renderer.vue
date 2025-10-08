@@ -1,6 +1,6 @@
 <template>
-  <div ref="containerRef" :data-card-renderer-type="props.type"></div>
-  <div ref="canvasRef" :data-card-renderer-type="props.type" v-if="props.canvas"></div>
+  <div ref="containerRef" v-show="isShowDOM"></div>
+  <div ref="canvasRef" v-show="isShowCanvas"></div>
 </template>
 
 <script lang="ts" setup>
@@ -28,18 +28,27 @@ const props = defineProps({
     type: Object as PropType<ResizeCardOptions>,
     default: () => ({})
   },
-  canvas: {
+  renderMode: {
     type: String as PropType<CreateImageOptions["outputType"]>,
-    default: false
+    default: "dom"
   }
 });
 
 const canvasRef = ref<HTMLElement | null>(null);
 const containerRef = ref<HTMLElement | null>(null);
+const isShowDOM = ref(true);
+const isShowCanvas = ref(!isShowDOM.value);
+
+function toggleRenderMode(showDOM: boolean) {
+  isShowDOM.value = showDOM;
+  isShowCanvas.value = !showDOM;
+}
 
 async function renderAndResizeCard(isFirstRender = false) {
   if (!containerRef.value) return;
+  toggleRenderMode(true);
   const el = containerRef.value as HTMLDivElement;
+  el.setAttribute("data-card-renderer-type", props.type);
   if (isFirstRender) {
     createCard(props.config, el, props.resizeOptions);
     becomeCanvas();
@@ -68,7 +77,21 @@ onMounted(() => {
 });
 
 function becomeCanvas() {
-  if (!props.canvas) return;
+  if (props.renderMode === "dom") return;
+  containerRef.value && (containerRef.value.style.opacity = "0");
+  setTimeout(() => {
+    buildImage(() => toggleRenderMode(false));
+  }, 100);
+}
+
+function buildImage(onFinished?: CreateImageOptions["onFinished"]) {
+  if (containerRef.value && canvasRef.value) {
+    createImage(containerRef.value, canvasRef.value, {
+      ...props.resizeOptions,
+      outputType: props.renderMode,
+      onFinished: () => onFinished?.()
+    });
+  }
 }
 
 function manualResize() {
@@ -77,16 +100,9 @@ function manualResize() {
   }
 }
 
-function exportImage() {
-  if (containerRef.value && canvasRef.value) {
-    console.log(containerRef.value, canvasRef.value);
-    createImage(containerRef.value, canvasRef.value, { ...props.resizeOptions, outputType: props.canvas });
-  }
-}
-
 defineExpose({
   resize: manualResize,
-  exportImage
+  exportImage: buildImage
 });
 </script>
 

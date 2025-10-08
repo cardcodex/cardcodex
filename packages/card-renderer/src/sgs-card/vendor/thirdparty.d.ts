@@ -197,7 +197,8 @@ export function switchInterface(this: HTMLInputElement): void;
 export function exportForm(): void;
 
 export interface CreateImageOptions extends ResizeCardOptions {
-  outputType?: "canvas" | "image";
+  outputType?: "canvas" | "image" | "dom";
+  onFinished?: () => void;
 }
 
 /** 将当前卡片渲染为图片 */
