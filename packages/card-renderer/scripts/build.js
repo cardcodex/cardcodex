@@ -14,7 +14,7 @@ function rollupOptionsFn(rollupOptions) {
   }
 
   // add first plugin
-  rollupOptions.plugins.unshift(importRaw());
+  rollupOptions.plugins.push(importRaw());
   return rollupOptions;
 }
 

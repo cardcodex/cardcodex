@@ -21,7 +21,8 @@ export interface IllustrationAdjust {
 export interface IllustrationObject {
   path: string;
   pathFront?: string;
-  adjust: IllustrationAdjust;
+  allowEvent?: boolean;
+  adjust?: IllustrationAdjust;
 }
 
 /** 文本字号选项 */
@@ -37,7 +38,7 @@ export interface CardDataObject {
   /** 例如 "3/5" 或 3.5 */
   hitpoints: number | string;
   style: string;
-  illustration: string | IllustrationObject;
+  image: string | IllustrationObject;
   skills: SkillObject[];
   quote: string;
   comment: string[];

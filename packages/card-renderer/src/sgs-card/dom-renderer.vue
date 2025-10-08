@@ -62,6 +62,6 @@ defineExpose({
 </script>
 
 <style>
-@import "common.css";
+@import "./common.css";
 @import "@cardcodex/sgs-card-resources/dist/index.css";
 </style>

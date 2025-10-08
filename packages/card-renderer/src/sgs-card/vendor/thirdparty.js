@@ -653,7 +653,8 @@ export function createCard(object, el, resizeCardOptions) {
   }
 
   // 可改变图像位置的拖动事件
-  if (!object.illustration) {
+  var allowEvent = object.image?.allowEvent ?? true;
+  if (!object.image) {
     card.getElementsByClassName("illustration")[0].innerHTML = "";
     card.getElementsByClassName("illustration")[1].innerHTML = "";
   } else {
@@ -662,7 +663,7 @@ export function createCard(object, el, resizeCardOptions) {
     card.drag = { x: 0, y: 0, factor: 1.0, dragging: 0 };
 
     function adjustImage(image) {
-      var adjust = object.illustration.adjust;
+      var adjust = object.image.adjust;
       if (adjust) {
         image.style.width = image.naturalWidth * adjust.scale + "px";
         image.style.height = image.naturalHeight * adjust.scale + "px";
@@ -673,17 +674,19 @@ export function createCard(object, el, resizeCardOptions) {
     }
 
     image.onload = function () {
-      if (typeof object.illustration == "object") {
+      if (typeof object.image == "object") {
         adjustImage(image);
       }
 
       card.onmousedown = function (event) {
+        if (!allowEvent) return;
         card.drag.x = event.offsetX - image.offsetLeft;
         card.drag.y = event.offsetY - image.offsetTop;
         card.drag.dragging = 1;
       };
 
       card.onmousemove = function (event) {
+        if (!allowEvent) return;
         if (card.drag.dragging) {
           image.style.left = event.offsetX - card.drag.x + "px";
           image.style.top = event.offsetY - card.drag.y + "px";
@@ -693,11 +696,13 @@ export function createCard(object, el, resizeCardOptions) {
       };
 
       card.onmouseup = function (event) {
+        if (!allowEvent) return;
         card.drag.dragging = 0;
         imageAdjustFeedback(image);
       };
 
       card.addEventListener("wheel", function (event) {
+        if (!allowEvent) return;
         var delta = event.deltaY / 4000;
         var factor = Math.max(card.drag.factor - delta, 0);
         var rate = factor / card.drag.factor;
@@ -716,6 +721,7 @@ export function createCard(object, el, resizeCardOptions) {
       });
 
       function triggerEventTouch(type, event) {
+        if (!allowEvent) return;
         event.preventDefault();
         event.stopPropagation();
         event = event.targetTouches[0];
@@ -724,12 +730,14 @@ export function createCard(object, el, resizeCardOptions) {
         card[type](event);
       }
       function getTouchDistance(event) {
+        if (!allowEvent) return;
         var touch0 = event.targetTouches[0];
         var touch1 = event.targetTouches[1];
         return Math.sqrt(Math.pow(touch0.clientX - touch1.clientX, 2) + Math.pow(touch0.clientY - touch1.clientY, 2));
       }
 
       card.addEventListener("touchstart", function (event) {
+        if (!allowEvent) return;
         if (event.targetTouches.length == 1) {
           triggerEventTouch("onmousedown", event);
         } else if (event.targetTouches.length == 2) {
@@ -738,6 +746,7 @@ export function createCard(object, el, resizeCardOptions) {
       });
 
       card.addEventListener("touchmove", function (event) {
+        if (!allowEvent) return;
         if (event.targetTouches.length == 1) {
           triggerEventTouch("onmousemove", event);
           imageAdjustFeedback(image);
@@ -757,6 +766,7 @@ export function createCard(object, el, resizeCardOptions) {
       });
 
       card.addEventListener("touchend", function (event) {
+        if (!allowEvent) return;
         if (event.targetTouches.length == 1) {
           triggerEventTouch("onmouseup", event);
         } else if (event.targetTouches.length == 2) {
@@ -766,7 +776,7 @@ export function createCard(object, el, resizeCardOptions) {
     };
 
     image2.onload = function () {
-      if (typeof object.illustration == "object") {
+      if (typeof object.image == "object") {
         adjustImage(image2);
       }
     };
@@ -774,11 +784,11 @@ export function createCard(object, el, resizeCardOptions) {
       this.style.display = "none";
     };
 
-    if (typeof object.illustration !== "object") {
-      image.src = object.illustration;
+    if (typeof object.image !== "object") {
+      image.src = object.image;
     } else {
-      image.src = object.illustration.path;
-      image2.src = object.illustration.pathFront;
+      image.src = object.image.path;
+      image2.src = object.image.pathFront;
     }
   }
 
@@ -859,14 +869,14 @@ export function switchInterface() {
 export function exportForm() {
   var object = JSON.parse(document.getElementById("panel-json-code").value);
 
-  if (typeof object.illustration == "object") {
-    var illu = object.illustration;
+  if (typeof object.image == "object") {
+    var illu = object.image;
     document.getElementById("panel-illustration-online").value = illu.path || "";
     document.getElementById("panel-illustration-online-front").value = illu.pathFront || "";
     document.getElementById("panel-illustration-adjust").value =
       illu.adjust.x + ", " + illu.adjust.y + ", " + illu.adjust.scale;
   } else {
-    document.getElementById("panel-illustration-online").value = object.illustration || "";
+    document.getElementById("panel-illustration-online").value = object.image || "";
     document.getElementById("panel-illustration-online-front").value = "";
   }
 
