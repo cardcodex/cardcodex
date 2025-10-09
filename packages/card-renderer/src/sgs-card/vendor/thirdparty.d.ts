@@ -36,7 +36,7 @@ export interface CardDataObject {
   name: string | { text: string; font?: string };
   nickname: string;
   /** 例如 "3/5" 或 3.5 */
-  hitpoints: number | string;
+  hp: number | string;
   style: string;
   image: string | IllustrationObject;
   skills: SkillObject[];

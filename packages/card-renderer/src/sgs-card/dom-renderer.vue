@@ -129,7 +129,8 @@ function buildImage(onFinished?: CreateImageOptions["onFinished"]) {
       outputType: props.renderMode,
       onFinished: () => {
         onFinished?.();
-        setTimeout(resizeCanvas, 100);
+        isRendering.value = false;
+        //setTimeout(resizeCanvas, 100);
       }
     });
   }

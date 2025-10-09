@@ -35,20 +35,20 @@ export function prepare() {
       }
       fontStyles.push(
         "@font-face {\n" +
-          "font-family:" +
-          name +
-          ";\n" +
-          "src: " +
-          src +
-          ";\n" +
-          "}" +
-          'font[font="' +
-          name +
-          '"] {\n' +
-          "font-family:" +
-          name +
-          ";\n" +
-          "}"
+        "font-family:" +
+        name +
+        ";\n" +
+        "src: " +
+        src +
+        ";\n" +
+        "}" +
+        'font[font="' +
+        name +
+        '"] {\n' +
+        "font-family:" +
+        name +
+        ";\n" +
+        "}"
       );
       fontOptions.push('<option value="' + "font='" + name + "'" + '">' + name + "</option>");
     }
@@ -186,14 +186,14 @@ export function generateFromInput() {
   }
 
   /*if (illustration.files[0]){
-		// https://www.cnblogs.com/workky/p/6061931.html
-		var reader = new FileReader();
-		reader.readAsDataURL(illustration.files[0]);
-		reader.onload = function(e){
-			var image = card.getElementsByClassName('illustration')[0].children[0]
-			image.src = this.result;
-		}
-	}*/
+    // https://www.cnblogs.com/workky/p/6061931.html
+    var reader = new FileReader();
+    reader.readAsDataURL(illustration.files[0]);
+    reader.onload = function(e){
+      var image = card.getElementsByClassName('illustration')[0].children[0]
+      image.src = this.result;
+    }
+  }*/
 
   var object = {
     kingdom: kingdom,
@@ -364,8 +364,8 @@ export function createCard(object, el, resizeCardOptions) {
       </div>
       <label class="custom-kingdom"></label>
       <ul class="hitpoints"></ul>
-      <h2 class="nickname"></h2>
-      <h2 class="name"></h2>
+      <h2 class="nickname" style="writing-mode:vertical-rl"></h2>
+      <h2 class="name" style="top:260px"></h2>
       <div class="description"></div>
       <div class="footer">
         <label class="trademark"></label>
@@ -431,7 +431,7 @@ export function createCard(object, el, resizeCardOptions) {
   }
   card.setAttribute("name", name);
 
-  var hp = object.hitpoints;
+  var hp = object.hp;
   var drained = 0,
     overflow = 0;
   if (typeof hp == "string") {
@@ -965,203 +965,175 @@ export function exportForm() {
 }
 
 export function createImage(result, outputEl, options) {
-  const { outputType = "image", onFinished = () => {}, imageScale = "200%" } = options;
+  const { outputType = "image", onFinished = () => { } } = options;
 
-  var scale = 2;
-  if (scale > 0) {
-    scale /= window.devicePixelRatio;
-  } else if (scale == -1) {
-    scale = 1;
-  } else if (scale == -2) {
-    scale = Math.min((window.innerWidth - 4) / result.clientWidth, (window.innerHeight - 4) / result.clientHeight);
-  }
-  var card0 = result.children[0];
-  if (!imageCreating && card0) {
-    var card = document.createElement("div");
-    result.appendChild(card);
-    card.outerHTML = card0.outerHTML;
-    card = result.children[1];
-    card0.style.display = "none";
-    card.style.visbility = "hidden";
+  var scale = 1;
+  if (!imageCreating) {
 
-    imageCreating = true;
-    card.classList.add("on-rendering");
-    var transform = result.style.transform;
-    var transformZoomed = "scale(" + scale + ")";
-    result.style.transform = transformZoomed;
+    var card0 = result.children[0];
+    if (card0) {
+      var card = document.createElement('div');
+      result.appendChild(card);
+      card.outerHTML = card0.outerHTML;
+      card = result.children[1];
+      card0.style.display = 'none';
 
-    // 因html2canvas忽略text-shadow受transform的影响，所以换算
-    var subElements = card.querySelectorAll("*");
-    var subElementStyles = [];
-    for (var i = 0; i < subElements.length; ++i) {
-      var style = getComputedStyle(subElements[i]);
-      var st = { textShadow: style.textShadow };
-      subElementStyles[i] = st;
-      if (style.writingMode == "vertical-rl") {
-        st.writingMode = "vertical-rl";
-      }
-      if (style.webkitBackgroundClip == "text") {
-        st.webkitBackgroundClip = "text";
-      }
-    }
+      imageCreating = true;
+      card.classList.add('on-rendering');
+      var transform = result.style.transform;
+      var transformZoomed = 'scale(' + scale + ')';
+      result.style.transform = transformZoomed;
 
-    for (var i = 0; i < subElementStyles.length; ++i) {
-      var style = subElementStyles[i];
-      var textShadow = style.textShadow;
-      if (textShadow && textShadow != "none") {
-        subElements[i].style.textShadow = textShadow.replace(
-          // 0 will be converted to 0px automatically
-          /([\d\.\-]+(?:px|em|ex|ch|rem))\s+([\d\.\-]+(?:px|em|ex|ch|rem))\s*([\d\.\-]+(?:px|em|ex|ch|rem))?/g,
-          function (m, x, y, z) {
-            var s = "calc(" + scale + " * " + x + ") calc(" + scale + " * " + y + ") ";
-            if (z) {
-              s += "calc(" + scale * window.devicePixelRatio + " * " + z + ") ";
-            }
-            return s;
-          }
-        );
-      }
-      if (style.writingMode == "vertical-rl") {
-        convertVerticalText(subElements[i]);
-      }
-    }
-
-    var promise = Promise.resolve();
-
-    result.style.transform = "";
-    for (var i = 0; i < subElementStyles.length; ++i) {
-      // 制造渐变文字
-      if (subElementStyles[i].webkitBackgroundClip == "text") {
-        const element = subElements[i];
-        var computedStyle = getComputedStyle(element);
-        if (computedStyle.getPropertyValue("--value")) {
-          element.innerHTML = computedStyle.getPropertyValue("--value");
+      // 因html2canvas忽略text-shadow受transform的影响，所以换算
+      var subElements = card.querySelectorAll('*');
+      var subElementStyles = [];
+      for (var i = 0; i < subElements.length; ++i) {
+        var style = getComputedStyle(subElements[i]);
+        var st = { textShadow: style.textShadow };
+        subElementStyles[i] = st;
+        if (style.writingMode == 'vertical-rl') {
+          st.writingMode = 'vertical-rl';
         }
-        if (!element.innerHTML) return;
-
-        var textShadow = element.style.textShadow;
-        element.style.textShadow = "none";
-        element.style.color = "transparent";
-        element.style.transform = transformZoomed;
-        promise = promise.then(function () {
-          var textImage;
-          return html2canvas(element)
-            .then(function (canvas) {
-              textImage = new Image();
-              textImage.src = canvas.toDataURL();
-              element.style.color = "";
-              element.style.backgroundImage = "none";
-              return html2canvas(element, { backgroundColor: null });
-            })
-            .then(function (canvas) {
-              var width = canvas.width,
-                height = canvas.height; // Must be greater than 0
-              var adata = canvas.getContext("2d").getImageData(0, 0, width, height).data;
-              canvas = document.createElement("canvas");
-              canvas.width = width;
-              canvas.height = height;
-              var context = canvas.getContext("2d");
-              context.drawImage(textImage, 0, 0);
-              var imageData = context.getImageData(0, 0, width, height);
-              var cdata = imageData.data;
-              for (var i = cdata.length - 1; i >= 0; i -= 4) {
-                cdata[i] = adata[i];
+        if (style.webkitBackgroundClip == 'text') {
+          st.webkitBackgroundClip = 'text';
+        }
+      };
+      for (var i = 0; i < subElementStyles.length; ++i) {
+        var style = subElementStyles[i];
+        var textShadow = style.textShadow;
+        if (textShadow && textShadow != 'none') {
+          subElements[i].style.textShadow =
+            textShadow.replace( // 0 will be converted to 0px automatically
+              /([\d\.\-]+(?:px|em|ex|ch|rem))\s+([\d\.\-]+(?:px|em|ex|ch|rem))\s*([\d\.\-]+(?:px|em|ex|ch|rem))?/g,
+              function (m, x, y, z) {
+                var s = 'calc\(' + scale + ' * ' + x + '\) calc\(' + scale + ' * ' + y + '\) ';
+                if (z) {
+                  s += 'calc\(' + scale * window.devicePixelRatio + ' * ' + z + '\) ';
+                }
+                return s;
               }
-              context.putImageData(imageData, 0, 0);
-              var fillImage = new Image();
-              fillImage.src = canvas.toDataURL();
-              element.insertBefore(fillImage, element.childNodes[0]);
-              var r = scale * window.devicePixelRatio;
-              fillImage.style.width = width / r + "px";
-              fillImage.style.height = height / r + "px";
-              fillImage.className = "_gradient-text";
-              //fillImage.style.left = element.offsetLeft + 'px';
-              //fillImage.style.top = element.offsetTop + 'px';
-              element.style.textShadow = textShadow;
-              element.style.textAlign = "";
-              element.style.transform = "";
-            });
-        });
+            );
+        }
+        if (style.writingMode == 'vertical-rl') {
+          convertVerticalText(subElements[i]);
+        }
       }
-    }
 
-    promise
-      .then(function () {
+      var promise = Promise.resolve();
+
+      result.style.transform = '';
+      // document.body.parentElement.style.width = '10000px';
+      // document.body.parentElement.style.height = '10000px';
+      for (var i = 0; i < subElementStyles.length; ++i) { // 制造渐变文字
+        if (subElementStyles[i].webkitBackgroundClip == 'text') {
+          (function (element) {
+            var computedStyle = getComputedStyle(element);
+            if (computedStyle.getPropertyValue('--value')) {
+              element.innerHTML = computedStyle.getPropertyValue('--value');
+            }
+            if (!element.innerHTML) return;
+
+            var textShadow = element.style.textShadow;
+            element.style.textShadow = 'none';
+            element.style.color = 'transparent';
+            element.style.transform = transformZoomed;
+            promise = promise.then(function () {
+              var textImage;
+              return html2canvas(element).then(function (canvas) {
+                textImage = new Image();
+                textImage.src = canvas.toDataURL();
+                element.style.color = '';
+                element.style.backgroundImage = 'none';
+                return html2canvas(element, { backgroundColor: null });
+              }).then(function (canvas) {
+                var width = canvas.width, height = canvas.height; // Must be greater than 0
+                var adata = canvas.getContext('2d').getImageData(0, 0, width, height).data;
+                canvas = document.createElement('canvas');
+                canvas.width = width; canvas.height = height;
+                var context = canvas.getContext('2d');
+                context.drawImage(textImage, 0, 0);
+                var imageData = context.getImageData(0, 0, width, height);
+                var cdata = imageData.data;
+                for (var i = cdata.length - 1; i >= 0; i -= 4) {
+                  cdata[i] = adata[i];
+                }
+                context.putImageData(imageData, 0, 0);
+                var fillImage = new Image();
+                fillImage.src = canvas.toDataURL();
+                element.insertBefore(fillImage, element.childNodes[0]);
+                var r = scale * window.devicePixelRatio;
+                fillImage.style.width = width / r + 'px';
+                fillImage.style.height = height / r + 'px';
+                fillImage.className = '_gradient-text';
+                //fillImage.style.left = element.offsetLeft + 'px';
+                //fillImage.style.top = element.offsetTop + 'px';
+                element.style.textShadow = textShadow;
+                element.style.textAlign = '';
+                element.style.transform = '';
+              });
+            });
+          })(subElements[i]);
+        }
+      }
+
+      promise.then(function () {
         result.style.transform = transformZoomed;
-        result.style.setProperty("--output-scale", scale);
+        result.style.setProperty('--output-scale', scale);
         return html2canvas(result, {
           allowTaint: true,
           useCORS: true
         });
-      })
-      .then(
-        function (canvas) {
-          document.body.parentElement.style.width = "";
-          imageCreating = false;
-          var output = outputEl;
-          output.innerHTML = "";
-          var outputElement = canvas;
-          try {
-            if (outputType !== "image") throw Error("skip");
-            var image = new Image();
-            image.src = canvas.toDataURL();
-            image.height = canvas.height / window.devicePixelRatio;
-            outputElement = image;
+      }).then(function (canvas) {
+        document.body.parentElement.style.width = '';
+        imageCreating = false;
+        var output = outputEl;
+        output.innerHTML = '';
+        var outputElement = canvas;
+        try {
+          if (outputType !== 'image') throw new Error();
+          var image = new Image();
+          image.src = canvas.toDataURL();
+          image.height = canvas.height / window.devicePixelRatio;
+          outputElement = image;
+          // image.onclick = function () {
+          //   if (confirm('下载图片吗？')) {
+          //     var a = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+          //     a.download = currentItem.nickname + '-' + currentItem.name + '.png';
+          //     if (navigator.userAgent.match('MQQBrowser')) { // QQ浏览器不支持Blob图片
+          //       a.href = image.src;
+          //       a.click();
+          //     } else {
+          //       canvas.toBlob(function (blob) {
+          //         a.href = getFileURL(blob);
+          //         a.click();
+          //         cardBlobUrls.push(a.href);
+          //       });
+          //     }
+          //   }
+          // }
+        } catch (e) {
 
-            onFinished(canvas, image);
-            // image.onclick = function () {
-            //   if (confirm("下载图片吗？")) {
-            //     var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-            //     a.download = currentItem.nickname + "-" + currentItem.name + ".png";
-            //     if (navigator.userAgent.match("MQQBrowser")) {
-            //       // QQ浏览器不支持Blob图片
-            //       a.href = image.src;
-            //       a.click();
-            //     } else {
-            //       canvas.toBlob(function (blob) {
-            //         a.href = getFileURL(blob);
-            //         a.click();
-            //         cardBlobUrls.push(a.href);
-            //       });
-            //     }
-            //   }
-            // };
-          } catch (e) {
-            onFinished(canvas);
-            // var currentColor = 0;
-            // canvas.onclick = function () {
-            //   switch ((currentColor = (currentColor + 1) % 4)) {
-            //     case 1:
-            //       output.style.backgroundColor = "#F00";
-            //       break;
-            //     case 2:
-            //       output.style.backgroundColor = "#0F0";
-            //       break;
-            //     case 3:
-            //       output.style.backgroundColor = "#00F";
-            //       break;
-            //     default:
-            //       output.style.backgroundColor = "";
-            //       break;
-            //   }
-            //   hint.innerHTML = "";
-            //   event.preventDefault();
-            //   event.stopPropagation();
-            // };
-          }
+          output.appendChild(hint);
 
-          output.appendChild(outputElement);
-          output.style.display = "";
-          result.style.transform = transform;
-          result.style.setProperty("--output-scale", "");
-          card0.style.display = "";
-          result.removeChild(card);
-        },
-        function () {
-          imageCreating = false;
+          var currentColor = 0;
+
         }
-      );
+
+        output.appendChild(outputElement);
+        output.style.display = '';
+        result.style.transform = transform;
+        result.style.setProperty('--output-scale', '');
+        card0.style.display = '';
+        //result.removeChild(card);
+        onFinished(outputElement);
+
+      }, function () {
+        imageCreating = false;
+      });
+
+    }
   }
+
 }
 
 var VERTICAL_SYMBOLS = {};
@@ -1175,9 +1147,9 @@ var VERTICAL_SYMBOLS = {};
 })();
 export function convertVerticalText(element) {
   convertText(element, VERTICAL_SYMBOLS.pattern, function (r) {
-    return "<span>" + VERTICAL_SYMBOLS[r] + "</span>";
+    return '<span>' + VERTICAL_SYMBOLS[r] + '</span>';
   });
-  if (getComputedStyle(element).textOrientation == "upright") {
+  if (getComputedStyle(element).textOrientation == 'upright') {
     convertText(element, /([\x20-\x7e])/g, '<span class="_rendering-rotated-letter">$1</span>');
   } else {
     if (getComputedStyle(element).fontFamily.match(/\bSymbolAnd\b/)) {
@@ -1300,11 +1272,11 @@ export function startCrop() {
       }
 
       /*function equalPixel(offset) {
-				return d[offset] === xr && d[offset + 1] === xg && d[offset + 2] === xb;
-			}
-			function unequalPixel(offset) {
-				return d[offset] !== xr || d[offset + 1] !== xg || d[offset + 2] !== xb;
-			}*/
+        return d[offset] === xr && d[offset + 1] === xg && d[offset + 2] === xb;
+      }
+      function unequalPixel(offset) {
+        return d[offset] !== xr || d[offset + 1] !== xg || d[offset + 2] !== xb;
+      }*/
 
       function equalPixel(offset) {
         return (
