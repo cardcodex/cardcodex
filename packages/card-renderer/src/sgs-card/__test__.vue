@@ -1,14 +1,32 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
-  <SgsCardDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" render-mode="image" />
-  <button @click="downloadImage">image</button>
+  <SgsCardDOMRenderer
+    ref="rendererRef"
+    :config="cardConfig"
+    type="classic"
+    :render-mode="renderMode"
+    @finished="downloadImage"
+  />
+  <button @click="makeImage">image</button>
+  <button @click="downloadImage">check</button>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { SgsCardDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
 
+const cardData = ref<any | null>(null);
 const rendererRef = ref<CardRendererInstance | null>(null);
+
+const renderMode = ref<"dom" | "image">("dom");
+
+watch(
+  [() => cardConfig],
+  () => {
+    renderMode.value = "dom";
+  },
+  { deep: true }
+);
 
 const cardConfig = reactive<CardDataObject>({
   kingdom: "吴",
@@ -27,8 +45,19 @@ const cardConfig = reactive<CardDataObject>({
   textSize: "auto"
 });
 
-function downloadImage() {
-  rendererRef.value?.exportImage();
+function makeImage() {
+  if (renderMode.value === "image") {
+    renderMode.value = "dom";
+  } else {
+    renderMode.value = "image";
+  }
+}
+
+function downloadImage(e: any) {
+  if (!cardData.value) {
+    cardData.value = e;
+  }
+  console.log(cardData.value);
 }
 
 onMounted(() => {

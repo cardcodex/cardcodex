@@ -12,6 +12,7 @@ export interface CardRendererProps {
 export interface CardRendererInstance {
   resize: () => void;
   exportImage: () => void;
+  isRendering: () => boolean;
 }
 
 export type { CardDataObject, ResizeCardOptions };

@@ -1109,23 +1109,23 @@ export function createImage(result, outputEl, options) {
             outputElement = image;
 
             onFinished(canvas, image);
-            image.onclick = function () {
-              if (confirm("下载图片吗？")) {
-                var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-                a.download = currentItem.nickname + "-" + currentItem.name + ".png";
-                if (navigator.userAgent.match("MQQBrowser")) {
-                  // QQ浏览器不支持Blob图片
-                  a.href = image.src;
-                  a.click();
-                } else {
-                  canvas.toBlob(function (blob) {
-                    a.href = getFileURL(blob);
-                    a.click();
-                    cardBlobUrls.push(a.href);
-                  });
-                }
-              }
-            };
+            // image.onclick = function () {
+            //   if (confirm("下载图片吗？")) {
+            //     var a = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+            //     a.download = currentItem.nickname + "-" + currentItem.name + ".png";
+            //     if (navigator.userAgent.match("MQQBrowser")) {
+            //       // QQ浏览器不支持Blob图片
+            //       a.href = image.src;
+            //       a.click();
+            //     } else {
+            //       canvas.toBlob(function (blob) {
+            //         a.href = getFileURL(blob);
+            //         a.click();
+            //         cardBlobUrls.push(a.href);
+            //       });
+            //     }
+            //   }
+            // };
           } catch (e) {
             onFinished(canvas);
             // var currentColor = 0;

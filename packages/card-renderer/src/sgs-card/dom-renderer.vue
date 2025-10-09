@@ -21,6 +21,10 @@ import {
   type CreateImageOptions
 } from "./vendor/thirdparty";
 
+const emits = defineEmits<{
+  finished: [HTMLCanvasElement | HTMLImageElement | undefined];
+}>();
+
 const props = defineProps({
   type: {
     type: String as unknown as PropType<SgsCardKey>,
@@ -77,10 +81,7 @@ async function renderAndResizeCard(isFirstRender = false) {
   becomeCanvas();
 }
 
-watch(
-  () => props.type,
-  () => renderAndResizeCard()
-);
+watch([() => props.type, () => props.renderMode, () => props.resizeOptions], () => renderAndResizeCard());
 
 watch(
   () => props.config,
@@ -96,7 +97,10 @@ onMounted(() => {
 
 function becomeCanvas() {
   saveCardSize();
-  if (props.renderMode === "dom") return;
+  if (props.renderMode === "dom") {
+    emits("finished", undefined);
+    return;
+  }
   isRendering.value = true;
   containerRef.value && (containerRef.value.style.opacity = "0");
   setTimeout(() => {
@@ -114,6 +118,7 @@ function resizeCanvas() {
   el.style.height = originCardSize.value[1] + "px";
   setTimeout(() => {
     isRendering.value = false;
+    emits("finished", canvasRef.value?.firstElementChild as HTMLCanvasElement);
   }, 100);
 }
 
