@@ -2,7 +2,7 @@
   <div ref="boxRef" :class="isRendering ? 'sgs-card-renderer is-rendering' : 'sgs-card-renderer'">
     <div ref="containerRef" v-show="isShowDOM"></div>
     <div ref="canvasRef" v-show="isShowCanvas"></div>
-    <div class="rendering-modal" v-show="isRendering">
+    <div class="rendering-modal" v-if="isRendering">
       <loadingSpinner />
     </div>
   </div>

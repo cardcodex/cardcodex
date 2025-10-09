@@ -29,9 +29,9 @@ watch(
 );
 
 const cardConfig = reactive<CardDataObject>({
-  kingdom: "吴",
-  name: "赵云",
-  nickname: "哈基米",
+  kingdom: "犬",
+  name: "大智",
+  nickname: "峡谷之犬",
   hitpoints: 4,
   style: "wu",
   skills: [{ name: "龙胆", description: "你可以将【杀】当【闪】，【闪】当【杀】使用或打出。" }],
