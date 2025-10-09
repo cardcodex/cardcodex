@@ -66,9 +66,9 @@ styleDirs.forEach(dir => {
 
 // --- 步骤 3: 生成主 index.ts (保持不变) ---
 const jsImport =
-  `${styleDirs.map(dir => `import * as ${dir.toUpperCase().replace(/-/g, "_")} from './${dir}';`).join("\n")}` as const;
+  `${styleDirs.map(dir => `import * as ${dir.toUpperCase().replace(/-/g, "_")} from './${dir}';`).join("\n")}`;
 
-const jsExport = `export { ${styleDirs.map(dir => dir.toUpperCase().replace(/-/g, "_")).join(", ")} }` as const;
+const jsExport = `export { ${styleDirs.map(dir => dir.toUpperCase().replace(/-/g, "_")).join(", ")} }`;
 
 const stylePacksExport = `export const SgsCardResources = {
 ${styleDirs.map(dir => `  '${dir.toUpperCase().replace(/-/g, "_")}': ${dir.toUpperCase().replace(/-/g, "_")},`).join("\n")}

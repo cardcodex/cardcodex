@@ -1,6 +1,6 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
-  <SgsCardDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" render-mode="dom" />
+  <SgsCardDOMRenderer ref="rendererRef" :config="cardConfig" type="classic" render-mode="image" />
   <button @click="downloadImage">image</button>
 </template>
 
@@ -17,7 +17,10 @@ const cardConfig = reactive<CardDataObject>({
   hitpoints: 4,
   style: "wu",
   skills: [{ name: "龙胆", description: "你可以将【杀】当【闪】，【闪】当【杀】使用或打出。" }],
-  image: "https://img.jsdelivr.com/raw.githubusercontent.com/zumerlab/snapdom/main/docs/assets/newhero.png",
+  image: {
+    path: "https://img.jsdelivr.com/raw.githubusercontent.com/zumerlab/snapdom/main/docs/assets/newhero.png",
+    allowEvent: false
+  },
   quote: "",
   comment: [],
   package: "",

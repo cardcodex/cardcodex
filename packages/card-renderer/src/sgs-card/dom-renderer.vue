@@ -1,9 +1,15 @@
 <template>
-  <div ref="containerRef" v-show="isShowDOM"></div>
-  <div ref="canvasRef" v-show="isShowCanvas"></div>
+  <div ref="boxRef" :class="isRendering ? 'sgs-card-renderer is-rendering' : 'sgs-card-renderer'">
+    <div ref="containerRef" v-show="isShowDOM"></div>
+    <div ref="canvasRef" v-show="isShowCanvas"></div>
+    <div class="rendering-modal" v-show="isRendering">
+      <loadingSpinner />
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import loadingSpinner from "./loading-spinner.vue";
 import { ref, watch, onMounted, type PropType } from "vue";
 import { type SgsCardKey } from "@cardcodex/sgs-card-resources";
 import {
@@ -34,14 +40,26 @@ const props = defineProps({
   }
 });
 
-const canvasRef = ref<HTMLElement | null>(null);
-const containerRef = ref<HTMLElement | null>(null);
+const isRendering = ref(false);
 const isShowDOM = ref(true);
 const isShowCanvas = ref(!isShowDOM.value);
+const boxRef = ref<HTMLElement | null>(null);
+const canvasRef = ref<HTMLElement | null>(null);
+const containerRef = ref<HTMLElement | null>(null);
+const originCardSize = ref([0, 0]);
 
 function toggleRenderMode(showDOM: boolean) {
   isShowDOM.value = showDOM;
   isShowCanvas.value = !showDOM;
+}
+
+function saveCardSize() {
+  const el = containerRef.value?.firstElementChild as HTMLDivElement;
+  if (el && boxRef.value) {
+    originCardSize.value = [el.offsetWidth, el.offsetHeight];
+    boxRef.value.style.width = el.offsetWidth + "px";
+    boxRef.value.style.height = el.offsetHeight + "px";
+  }
 }
 
 async function renderAndResizeCard(isFirstRender = false) {
@@ -77,10 +95,25 @@ onMounted(() => {
 });
 
 function becomeCanvas() {
+  saveCardSize();
   if (props.renderMode === "dom") return;
+  isRendering.value = true;
   containerRef.value && (containerRef.value.style.opacity = "0");
   setTimeout(() => {
     buildImage(() => toggleRenderMode(false));
+  }, 100);
+}
+
+function resizeCanvas() {
+  if (!canvasRef.value) return;
+  canvasRef.value.style.width = originCardSize.value[0] + "px";
+  canvasRef.value.style.height = originCardSize.value[1] + "px";
+  const el = canvasRef.value?.children[0] as HTMLDivElement;
+  if (!el) return;
+  el.style.width = originCardSize.value[0] + "px";
+  el.style.height = originCardSize.value[1] + "px";
+  setTimeout(() => {
+    isRendering.value = false;
   }, 100);
 }
 
@@ -89,7 +122,10 @@ function buildImage(onFinished?: CreateImageOptions["onFinished"]) {
     createImage(containerRef.value, canvasRef.value, {
       ...props.resizeOptions,
       outputType: props.renderMode,
-      onFinished: () => onFinished?.()
+      onFinished: () => {
+        onFinished?.();
+        setTimeout(resizeCanvas, 100);
+      }
     });
   }
 }
@@ -102,7 +138,8 @@ function manualResize() {
 
 defineExpose({
   resize: manualResize,
-  exportImage: buildImage
+  exportImage: buildImage,
+  isRendering: () => isRendering.value
 });
 </script>
 

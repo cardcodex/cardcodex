@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.js",
-    "generate:src": "ts-node scripts/generate-src.ts",
+    "generate:src": "node scripts/generate-src.js",
     "build:self": "pnpm run generate:src && pnpm run build"
   },
   "keywords": [],

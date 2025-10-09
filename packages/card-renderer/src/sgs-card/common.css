@@ -524,3 +524,17 @@ font[huali] {
 * {
   --svg-template: initial;
 }
+
+div.sgs-card-renderer {
+  position: relative;
+}
+
+div.sgs-card-renderer div.rendering-modal {
+  position: absolute;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: white;
+}

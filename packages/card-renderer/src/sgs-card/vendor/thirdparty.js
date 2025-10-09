@@ -839,7 +839,8 @@ export function resizeCard(card, options = {}) {
 function innerResizeCard(card, options = {}) {
   const { width = window.innerWidth, height = window.innerHeight, margin = 0 } = options;
 
-  const { isNeedsScaling, scaleRatio, translateX, translateY } = calcResizeScaling(card, options);
+  const { maxWidth, maxHeight, cardWidth, cardHeight, isNeedsScaling, scaleRatio, translateX, translateY } =
+    calcResizeScaling(card, options);
 
   if (isNeedsScaling) {
     const scaleRatio = Math.min(maxHeight / cardHeight, maxWidth / cardWidth);
@@ -867,6 +868,10 @@ export function calcResizeScaling(card, options = {}) {
   const translateY = (cardHeight * (scaleRatio - 1)) / 2;
 
   return {
+    maxWidth,
+    maxHeight,
+    cardWidth,
+    cardHeight,
     isNeedsScaling,
     scaleRatio,
     translateX,
@@ -960,9 +965,9 @@ export function exportForm() {
 }
 
 export function createImage(result, outputEl, options) {
-  const { outputType = "image", onFinished = () => {}, imageScale = "100%" } = options;
+  const { outputType = "image", onFinished = () => {}, imageScale = "200%" } = options;
 
-  var scale = 1;
+  var scale = 2;
   if (scale > 0) {
     scale /= window.devicePixelRatio;
   } else if (scale == -1) {
