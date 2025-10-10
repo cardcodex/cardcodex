@@ -1,3 +1,5 @@
+import { SgsCardKey } from "@cardcodex/sgs-card-resources";
+
 export enum RenderMode {
   /** DOM渲染 */
   DOM = "dom",
@@ -65,7 +67,7 @@ export enum Group {
   JIN_LORD = "jin lord"
 }
 
-export type HpType = number | string | [number, number | undefined, number | undefined];
+export type HpType = number | string | [hp: number, maxHp: number | undefined, armor: number | undefined];
 
 export interface CardConfig {
   group: Group;
@@ -96,21 +98,21 @@ export interface CardConfig {
   fontSize?: "tiny" | "small" | "normal" | "large";
 }
 
-export function defineCardConfig(config: CardConfig): CardConfig {
+export interface StyledCardConfig extends CardConfig {
+  style: SgsCardKey;
+}
+
+export function defineCardConfig({ config }: { config: CardConfig; }): CardConfig {
   return config;
 }
 
-type WidthOnly = {
+export type SizeOptions = {
   width: number;
   height?: never;
-};
-
-type HeightOnly = {
+} | {
   height: number;
   width?: never;
 };
-
-export type ResizeOptions = WidthOnly | HeightOnly;
 
 export interface DOMRendererInstance {
   el: () => HTMLElement | undefined;
@@ -122,7 +124,7 @@ export interface CardRendererInstance extends Omit<DOMRendererInstance, "el"> {
 /**
  * 
  * @param hp 体力值
- * @param maxHp 体力上限，可以不传或者传 0
+ * @param maxHp 体力上限，可以不传，或者传 0
  * @param armor 护甲值
  * @returns 
  */

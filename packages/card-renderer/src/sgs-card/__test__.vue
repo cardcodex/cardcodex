@@ -7,7 +7,6 @@
     :size="{
       width: width
     }"
-    :style="SgsCardResourcesMap.CLASSIC"
     :render-mode="RenderMode.Canvas"
   />
 </template>
@@ -15,16 +14,17 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue";
 import cardRenderer from "./card-renderer.vue";
-import { SkillTag, RenderMode, CardConfig, CardRendererInstance, Group, defineHpConfig } from "./card-tools";
+import { SkillTag, RenderMode, CardRendererInstance, Group, StyledCardConfig } from "./card-tools";
 import { SgsCardResourcesMap } from "@cardcodex/sgs-card-resources";
 
 const cardRef = ref<CardRendererInstance>();
 const width = ref(300);
-const cardConfig = reactive<CardConfig>({
+const cardConfig = reactive<StyledCardConfig>({
+  style: SgsCardResourcesMap.CLASSIC,
   badge: "畜",
   name: "锅巴",
   title: "哈基米哈基米",
-  hp: [2, 0, 1],
+  hp: [2, 3, 2],
   group: Group.SHU_LORD,
   nameStyle: {
     scale: 0.7,

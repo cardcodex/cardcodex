@@ -58,7 +58,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, type PropType } from "vue";
-import { CardConfig, defineHpConfig, DOMRendererInstance, HpType, ResizeOptions, SkillConfig } from "./card-tools";
+import { CardConfig, defineHpConfig, DOMRendererInstance, HpType, SizeOptions, SkillConfig } from "./card-tools";
 
 const domRef = ref<HTMLElement>();
 const imageRef = ref<HTMLImageElement>();
@@ -82,7 +82,7 @@ const props = defineProps({
     required: true
   },
   size: {
-    type: Object as PropType<ResizeOptions>,
+    type: Object as PropType<SizeOptions>,
     default: () => ({})
   }
 });
