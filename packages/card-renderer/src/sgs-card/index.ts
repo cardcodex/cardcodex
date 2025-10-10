@@ -1,3 +1,3 @@
-export { default as DOMRenderer } from "./dom-renderer.vue";
+export { default as DOMBuilder } from "./dom-builder.vue";
 export { type CardConfig } from './card-tools'
 

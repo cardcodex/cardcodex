@@ -1,13 +1,13 @@
 <template>
   <div :style="fitSizeStyle" :data-card-renderer-type="props.config.style">
-    <DOMRenderer v-show="showDOM" ref="domRef" :config="props.config" :size="props.size" @resize="resizeCard" />
+    <DOMBuilder v-show="showDOM" ref="domRef" :config="props.config" :size="props.size" @resize="resizeCard" />
     <div ref="innerRef" v-show="!showDOM"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import html2canvas from "html2canvas";
-import DOMRenderer from "./dom-renderer.vue";
+import DOMBuilder from "./dom-builder.vue";
 import { ref, watch, onMounted, type PropType } from "vue";
 import { StyledCardConfig, DOMRendererInstance, RenderMode, SizeOptions } from "./card-tools";
 
