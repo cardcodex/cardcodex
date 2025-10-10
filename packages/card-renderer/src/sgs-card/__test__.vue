@@ -1,55 +1,52 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
-  <!-- <SgsCardDOMRenderer :config="cardConfig" :style="'classic'" /> -->
-  <cardDom :config="cardConfig" :style="'classic-cards'" :render-mode="'dom'" />
+  <input type="number" v-model="width" />
+  <cardRenderer
+    ref="cardRef"
+    :config="cardConfig"
+    :size="{
+      width: width
+    }"
+    :style="SgsCardResourcesMap.CLASSIC"
+    :render-mode="RenderMode.DOM"
+  />
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue";
-import { cardDom, SgsCardDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
+import cardRenderer from "./card-renderer.vue";
+import { SkillTag, RenderMode, CardConfig, CardRendererInstance, Group, defineHpConfig } from "./card-tools";
+import { SgsCardResourcesMap } from "@cardcodex/sgs-card-resources";
 
-const cardData = ref<any | null>(null);
-const rendererRef = ref<CardRendererInstance | null>(null);
-
-const renderMode = ref<"dom" | "image">("dom");
-
-const cardConfig = reactive<CardDataObject>({
-  kingdom: "犬",
-  name: "奶龙出击",
-  nickname: "",
-  hp: "3/6",
-  kind: "wu",
-  skills: [{ name: "龙胆", description: "立刻给我打钱" }],
+const cardRef = ref<CardRendererInstance>();
+const width = ref(400);
+const cardConfig = reactive<CardConfig>({
+  badge: "畜",
+  name: "锅巴",
+  title: "哈基米哈基米",
+  hp: [2, 0, 1],
+  group: Group.SHU_LORD,
+  nameStyle: {
+    scale: 0.7,
+    moveX: -12,
+    moveY: 33
+  },
+  skills: [
+    { tag: [SkillTag.Limit], name: "龙胆", description: "<b>锁定技</b>你可s 以将" },
+    { name: "龙胆", description: "你可以将【杀】当【闪】，【闪】当【杀】使用或打出。" }
+  ],
   image: {
-    path: "https://i.postimg.cc/cC627c6L/images-removebg-preview.png",
+    path: "https://i.postimg.cc/RZWTR3pb/IMG-20201006-123445-1.jpg",
     adjust: {
-      x: 90,
-      y: 110,
-      scale: 1.2
+      x: 50,
+      y: 20,
+      scale: 2
     }
   },
-  quote: "等着吧",
-  comment: [],
-  package: "奶",
-  textSize: "auto"
+  quote: "",
+  comments: [],
+  package: ""
 });
 
-function makeImage() {
-  if (renderMode.value === "image") {
-    renderMode.value = "dom";
-  } else {
-    renderMode.value = "image";
-  }
-}
-
-function downloadImage(e: any) {
-  if (!cardData.value) {
-    cardData.value = e;
-  }
-  console.log(cardData.value);
-}
-
-onMounted(() => {
-  console.log(rendererRef.value);
-});
+onMounted(() => {});
 </script>

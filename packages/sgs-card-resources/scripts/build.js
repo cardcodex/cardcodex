@@ -25,6 +25,7 @@ const entryFiles = glob.sync(`${srcDir}/**/*.ts`);
 
 // 单独处理 index.css
 function buildFile(globFiles, filename, directory = distDir) {
+  if (globFiles.length === 0) return;
   console.log(`💡 aggregating into "${filename}"`);
   const targetFile = path.resolve(directory, filename);
   fs.writeFileSync(targetFile, "");
@@ -123,23 +124,23 @@ async function build() {
 
   count = 1;
 
-  console.log(`💡 Waiting for generating inline css`);
-  for (const entryFile of entryFiles) {
-    const entryName = path.basename(entryFile, ".ts");
-    console.log(`   🔨 [${count}/${total}] building entry: ${entryName} [inline css]`);
-    const bundle = await rollup(rollupOptions(entryFile, true));
-    await bundle.write({
-      dir: distDir,
-      format: "esm",
-      sourcemap: true,
-      entryFileNames: `${entryName}.mjs`,
-      plugins: [terser()]
-    });
+  // console.log(`💡 Waiting for generating inline css`);
+  // for (const entryFile of entryFiles) {
+  //   const entryName = path.basename(entryFile, ".ts");
+  //   console.log(`   🔨 [${count}/${total}] building entry: ${entryName} [inline css]`);
+  //   const bundle = await rollup(rollupOptions(entryFile, true));
+  //   await bundle.write({
+  //     dir: distDir,
+  //     format: "esm",
+  //     sourcemap: true,
+  //     entryFileNames: `${entryName}.mjs`,
+  //     plugins: [terser()]
+  //   });
 
-    console.log(`   ✅ [${count}/${total}] ${entryName} [inline css] is built`);
-    count += 1;
-  }
-  changeDirCssURLPath(distDir, { showLog: true });
+  //   console.log(`   ✅ [${count}/${total}] ${entryName} [inline css] is built`);
+  //   count += 1;
+  // }
+  // changeDirCssURLPath(distDir, { showLog: true });
   aggregateCssFiles(distDir);
   console.log(`🎉 All entries for ${pkgJson.name} are built`);
 }

@@ -40,6 +40,7 @@ export interface CardDataObject {
   kind: string;
   image: string | IllustrationObject;
   skills: SkillObject[];
+  skillFontSize?: "tiny" | "small" | "normal" | "large";
   quote: string;
   comment: string[];
   package: string;
