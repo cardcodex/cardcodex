@@ -1,13 +1,12 @@
 <template>
-  <div :data-card-renderer-type="props.style" :style="cardStyle">
+  <div :style="fitSizeStyle" :data-card-renderer-type="props.style">
     <DOMRenderer v-show="showDOM" ref="domRef" :config="props.config" :size="props.size" @resize="resizeCard" />
-    <div ref="innerRef" v-show="!showDOM" :style="cardStyle"></div>
+    <div ref="innerRef" v-show="!showDOM"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-// @ts-ignore
-import domtoimage from "dom-to-image-more";
+import html2canvas from "html2canvas";
 import DOMRenderer from "./dom-renderer.vue";
 import { SgsCardKey } from "@cardcodex/sgs-card-resources";
 import { ref, watch, onMounted, type PropType } from "vue";
@@ -17,7 +16,7 @@ const showDOM = ref(true);
 const innerRef = ref<HTMLElement>();
 const domRef = ref<DOMRendererInstance>();
 
-const cardStyle = ref({
+const fitSizeStyle = ref({
   width: "auto",
   height: "auto"
 });
@@ -48,20 +47,11 @@ const props = defineProps({
 const trickSize = {} as unknown as ResizeOptions;
 const propSize = ref(trickSize);
 
-function renderMode() {
-  const fnMap: Record<RenderMode, null | ((el: HTMLElement) => Promise<any>)> = {
-    [RenderMode.DOM]: null,
-    [RenderMode.SVG]: domtoimage.toSvg,
-    [RenderMode.Image]: domtoimage.toPng,
-    [RenderMode.Canvas]: domtoimage.toCanvas
-  };
-
+function card2Canvas() {
   const el = domRef.value?.el();
-  const fn = fnMap[props.renderMode];
-  if (!fn || !el) return;
-  showDOM.value = true;
-  fn(el)
-    .then(function (result: string | HTMLElement) {
+  if (!el || !innerRef.value) return;
+  html2canvas(el)
+    .then((result: string | HTMLElement) => {
       if (typeof result === "string") {
         const image = new Image();
         image.src = result;
@@ -85,7 +75,7 @@ function renderMode() {
 watch(
   [() => props],
   () => {
-    renderMode();
+    card2Canvas();
   },
   {
     deep: true
@@ -93,15 +83,14 @@ watch(
 );
 
 function resizeCard(width: number, height: number) {
-  cardStyle.value = {
+  fitSizeStyle.value = {
     width: `${width}px`,
     height: `${height}px`
   };
-  console.log("resizeCard", width, height);
   emit("resize", width, height);
 }
 
 onMounted(() => {
-  renderMode();
+  card2Canvas();
 });
 </script>

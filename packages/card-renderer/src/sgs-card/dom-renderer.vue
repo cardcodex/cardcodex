@@ -249,7 +249,9 @@ const resizeStyle = computed(() => {
     scaleRatio = Math.min(scaleX, scaleY);
   }
 
-  emit("resize", cardWidth * scaleRatio, cardHeight * scaleRatio);
+  const finalWidth = cardWidth * scaleRatio;
+  const finalHeight = cardHeight * scaleRatio;
+  emit("resize", finalWidth, finalHeight);
 
   return {
     transformOrigin: "top left",

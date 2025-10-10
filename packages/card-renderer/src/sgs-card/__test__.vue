@@ -8,7 +8,7 @@
       width: width
     }"
     :style="SgsCardResourcesMap.CLASSIC"
-    :render-mode="RenderMode.DOM"
+    :render-mode="RenderMode.Canvas"
   />
 </template>
 
@@ -19,7 +19,7 @@ import { SkillTag, RenderMode, CardConfig, CardRendererInstance, Group, defineHp
 import { SgsCardResourcesMap } from "@cardcodex/sgs-card-resources";
 
 const cardRef = ref<CardRendererInstance>();
-const width = ref(400);
+const width = ref(300);
 const cardConfig = reactive<CardConfig>({
   badge: "畜",
   name: "锅巴",
@@ -32,8 +32,8 @@ const cardConfig = reactive<CardConfig>({
     moveY: 33
   },
   skills: [
-    { tag: [SkillTag.Limit], name: "龙胆", description: "<b>锁定技</b>你可s 以将" },
-    { name: "龙胆", description: "你可以将【杀】当【闪】，【闪】当【杀】使用或打出。" }
+    { tag: [SkillTag.Limit], name: "龙胆", description: "<b>锁定技</b>你可以将" },
+    { name: "龙胆", description: "<b>锁定技</b>。你的♥♦【杀】无使用距离和次数限制。" }
   ],
   image: {
     path: "https://i.postimg.cc/RZWTR3pb/IMG-20201006-123445-1.jpg",
@@ -43,9 +43,9 @@ const cardConfig = reactive<CardConfig>({
       scale: 2
     }
   },
-  quote: "",
+  quote: "废物哈吉米",
   comments: [],
-  package: ""
+  package: "狗"
 });
 
 onMounted(() => {});
