@@ -1,19 +1,12 @@
 <template>
   <input type="text" v-model="cardConfig.name" />
-  <SgsCardDOMRenderer
-    ref="rendererRef"
-    :config="cardConfig"
-    type="classic"
-    :render-mode="renderMode"
-    @finished="downloadImage"
-  />
-  <button @click="makeImage">image</button>
-  <button @click="downloadImage">check</button>
+  <!-- <SgsCardDOMRenderer :config="cardConfig" :style="'classic'" /> -->
+  <cardDom :config="cardConfig" :style="'classic-cards'" :render-mode="'dom'" />
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from "vue";
-import { SgsCardDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
+import { cardDom, SgsCardDOMRenderer, type CardDataObject, type CardRendererInstance } from ".";
 
 const cardData = ref<any | null>(null);
 const rendererRef = ref<CardRendererInstance | null>(null);
@@ -22,18 +15,22 @@ const renderMode = ref<"dom" | "image">("dom");
 
 const cardConfig = reactive<CardDataObject>({
   kingdom: "犬",
-  name: "",
-  nickname: "在踩踩懂",
-  hp: 4,
-  style: "wu",
-  skills: [{ name: "龙胆", description: "你可以将【杀】当【闪】，【闪】当【杀】使用或打出。" }],
+  name: "奶龙出击",
+  nickname: "",
+  hp: "3/6",
+  kind: "wu",
+  skills: [{ name: "龙胆", description: "立刻给我打钱" }],
   image: {
-    path: "https://img.jsdelivr.com/raw.githubusercontent.com/zumerlab/snapdom/main/docs/assets/newhero.png",
-    allowEvent: false
+    path: "https://i.postimg.cc/cC627c6L/images-removebg-preview.png",
+    adjust: {
+      x: 90,
+      y: 110,
+      scale: 1.2
+    }
   },
-  quote: "",
+  quote: "等着吧",
   comment: [],
-  package: "",
+  package: "奶",
   textSize: "auto"
 });
 

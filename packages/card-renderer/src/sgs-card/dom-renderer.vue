@@ -26,7 +26,7 @@ const emits = defineEmits<{
 }>();
 
 const props = defineProps({
-  type: {
+  style: {
     type: String as unknown as PropType<SgsCardKey>,
     required: true
   },
@@ -70,7 +70,7 @@ async function renderAndResizeCard(isFirstRender = false) {
   if (!containerRef.value) return;
   toggleRenderMode(true);
   const el = containerRef.value as HTMLDivElement;
-  el.setAttribute("data-card-renderer-type", props.type);
+  el.setAttribute("data-card-renderer-type", props.style);
   if (isFirstRender) {
     createCard(props.config, el, props.resizeOptions);
     becomeCanvas();
@@ -81,7 +81,7 @@ async function renderAndResizeCard(isFirstRender = false) {
   becomeCanvas();
 }
 
-watch([() => props.type, () => props.renderMode, () => props.resizeOptions], () => renderAndResizeCard());
+watch([() => props.style, () => props.renderMode, () => props.resizeOptions], () => renderAndResizeCard());
 
 watch(
   () => props.config,

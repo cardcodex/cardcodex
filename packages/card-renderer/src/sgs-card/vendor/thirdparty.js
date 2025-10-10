@@ -364,8 +364,8 @@ export function createCard(object, el, resizeCardOptions) {
       </div>
       <label class="custom-kingdom"></label>
       <ul class="hitpoints"></ul>
-      <h2 class="nickname" style="writing-mode:vertical-rl"></h2>
-      <h2 class="name" style="top:260px"></h2>
+      <h2 class="nickname"></h2>
+      <h2 class="name"></h2>
       <div class="description"></div>
       <div class="footer">
         <label class="trademark"></label>
@@ -386,7 +386,7 @@ export function createCard(object, el, resizeCardOptions) {
 
   var card = template.content.firstElementChild.cloneNode(true);
   el.innerHTML = "";
-  card.className = "card " + object.style;
+  card.className = "card " + object.kind;
 
   if (object.kingdom) {
     var kingdom = object.kingdom;

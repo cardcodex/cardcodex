@@ -12,9 +12,9 @@ export interface SkillObject {
 
 /** 插图调整对象结构 */
 export interface IllustrationAdjust {
-  x: number;
-  y: number;
-  scale: number;
+  x?: number;
+  y?: number;
+  scale?: number;
 }
 
 /** 插图对象结构 */
@@ -33,11 +33,11 @@ export type TextSizeType = "auto" | "tiny" | "small" | "normal" | "large";
  */
 export interface CardDataObject {
   kingdom: string;
-  name: string | { text: string; font?: string };
+  name: string;
   nickname: string;
   /** 例如 "3/5" 或 3.5 */
   hp: number | string;
-  style: string;
+  kind: string;
   image: string | IllustrationObject;
   skills: SkillObject[];
   quote: string;
